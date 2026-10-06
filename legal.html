@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Términos y condiciones · Política de privacidad — Yisus D Nexus</title>
+  <meta name="description" content="Términos y condiciones de uso y política de privacidad (Ley 1581 de 2012) de Yisus D Nexus, POS modular offline-first para pequeños negocios." />
+  <meta name="theme-color" content="#0b1526" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="legal-top">
+    <div class="wrap"><a href="index.html">← Volver a Yisus D Nexus</a></div>
+  </div>
+
+  <main class="legal-body" id="contenido">
+    <span class="eyebrow">DOCUMENTO LEGAL</span>
+    <h1>Yisus D Nexus — Términos y política de privacidad</h1>
+    <p class="ver">Versión 0.2.0 · 6 de octubre de 2026 · Programa de punto de venta (POS) para pequeños negocios (tiendas, ropa, papelería, minimercado, ferretería, miscelánea).</p>
+
+    <div class="legal-notice">
+      Este documento tiene dos partes: <strong>Parte A</strong> (términos y condiciones) y
+      <strong>Parte B</strong> (política de privacidad, Ley 1581 de 2012 de Colombia y Decreto 1377 de 2013).
+      Al instalar, registrar el negocio o usar el programa, usted acepta ambas. Si no está de acuerdo, no instale ni use el programa.<br /><br />
+      Si usted es dueño de un negocio que usa Yisus D Nexus, usted es el <strong>responsable</strong> de los datos de sus
+      clientes, empleados y proveedores. Los campos <span class="blank">resaltados así</span> los completa cada negocio
+      con sus datos reales antes de publicar o entregar este documento.
+    </div>
+
+    <section class="legal-sec" aria-label="Cómo funciona el programa">
+      <h2>Cómo funciona el programa (resumen)</h2>
+      <p><strong>1.</strong> Funciona <strong>primero sin internet</strong>. Sus datos se guardan en su equipo (carpeta de datos local; en Windows: <code>%APPDATA%\Yisus-D-Nexus</code>).</p>
+      <p><strong>2.</strong> La sincronización en la nube (Supabase/PostgreSQL) es <strong>opcional</strong> y es su propia nube privada, configurada con sus credenciales. Si no la activa, nada sale de su computador, salvo la comprobación de actualizaciones si usted configura una dirección de actualización.</p>
+      <p><strong>3.</strong> Autenticación propia del sistema (usuarios, roles y sesiones en la aplicación, contraseñas con Argon2id). No se usa Supabase Auth.</p>
+      <p><strong>4.</strong> Respaldos (backups) en ZIP generados en su equipo, con verificación y opcionalmente cifrado. Guardar una copia fuera del PC (USB u otra nube) es responsabilidad suya.</p>
+      <p><strong>5.</strong> El ticket del POS <strong>no</strong> es factura electrónica ante la DIAN. La facturación electrónica requiere cumplir la norma vigente por su cuenta y con su contador (ver Parte A, punto 7).</p>
+    </section>
+
+    <section class="legal-sec" id="terminos" aria-label="Términos y condiciones">
+      <h2>Parte A — Términos y condiciones de uso</h2>
+
+      <h3>1. Qué es y quién lo entrega</h3>
+      <p><strong>1.1.</strong> Yisus D Nexus es un programa de caja, inventario, fiado (clientes), proveedores, compras, gastos, reportes y respaldos.</p>
+      <p><strong>1.2.</strong> Proveedor del programa: <strong>Yisus D Dev</strong>, contacto: <a href="mailto:jesusdramirez26@gmail.com">jesusdramirez26@gmail.com</a>, ciudad: <span class="blank">[CIUDAD, COLOMBIA]</span>.</p>
+      <p><strong>1.3.</strong> El programa se entrega “COMO ESTÁ” (<em>as is</em>), versión 0.2.0.</p>
+
+      <h3>2. Licencia de uso</h3>
+      <p><strong>2.1.</strong> Se le permite instalar y usar el programa en los computadores de <strong>su negocio</strong> (incluye todas sus sucursales registradas en el sistema).</p>
+      <p><strong>2.2.</strong> NO se permite: revenderlo, alquilarlo, ceder la licencia a terceros, modificarlo para presentarlo como propio, ni eludir los controles de usuarios, roles y permisos.</p>
+      <p><strong>2.3.</strong> Usted es responsable de crear usuarios con roles y permisos adecuados (dueño/administrador, cajero, vendedor) y de desactivar los usuarios que ya no trabajen con usted.</p>
+
+      <h3>3. Requisitos y uso correcto</h3>
+      <p><strong>3.1.</strong> Requiere Windows de 64 bits (instalador oficial) y espacio para datos y respaldos. Funciona sin internet; la nube solo se necesita si usted activa sincronización o descarga de actualizaciones.</p>
+      <p><strong>3.2.</strong> Usted se compromete a: (a) dar información veraz al registrar el negocio y los usuarios; (b) custodiar usuarios y contraseñas; (c) no usar el programa para fines ilegales; (d) respetar los datos personales de sus clientes y empleados (ver Parte B).</p>
+      <p><strong>3.3.</strong> Una sesión de caja por sucursal: apertura y cierre con arqueo. Las diferencias de caja quedan registradas en auditoría y no se pueden borrar.</p>
+
+      <h3>4. Sus datos son suyos (y su responsabilidad)</h3>
+      <p><strong>4.1.</strong> Toda la información operativa (productos, ventas, caja, clientes, fiado, proveedores, empleados, reportes) es de <strong>su negocio</strong>.</p>
+      <p><strong>4.2.</strong> El programa incluye respaldos automáticos en ZIP en su equipo, pero la responsabilidad de cuidar copias es suya: guarde una copia fuera del PC (USB o nube) cada semana como mínimo. Ante robo, daño o formateo sin copia, la información se pierde y el proveedor no responde por ello.</p>
+      <p><strong>4.3.</strong> Antes de cada actualización se genera un respaldo automático. La restauración debe verificarse antes de seguir operando.</p>
+
+      <h3>5. Actualizaciones</h3>
+      <p><strong>5.1.</strong> El programa puede avisarle cuando haya una versión nueva (canal local/USB o en línea, según configure). Instalarla es su decisión.</p>
+      <p><strong>5.2.</strong> Nunca se instala nada sin su autorización. No se permiten instalaciones degradadas (volver a una versión anterior) desde el actualizador.</p>
+      <p><strong>5.3.</strong> Después de actualizar, el programa aplica las migraciones de base de datos necesarias al abrir.</p>
+
+      <h3>6. Soporte</h3>
+      <p><strong>6.1.</strong> Soporte por WhatsApp: <a href="https://api.whatsapp.com/send/?phone=573232851942&text&type=phone_number&app_absent=0" target="_blank" rel="noopener">+57 323 285 1942</a> y correo <a href="mailto:jesusdramirez26@gmail.com">jesusdramirez26@gmail.com</a>.</p>
+      <p><strong>6.2.</strong> Para diagnosticar un problema se le pueden pedir registros (logs) locales. Usted decide qué información compartir; se recomienda no enviar contraseñas ni datos bancarios completos.</p>
+
+      <h3>7. Impuestos y facturación</h3>
+      <p><strong>7.1.</strong> Usted es responsable de sus obligaciones tributarias. Revise sus cierres de caja y sus impuestos con su contador.</p>
+      <p><strong>7.2.</strong> El ticket impreso o en PDF del POS es un comprobante interno del negocio y <strong>NO es factura electrónica ante la DIAN</strong>.</p>
+
+      <h3>8. Sin garantía y límite de responsabilidad</h3>
+      <p><strong>8.1.</strong> Hacemos lo posible porque las cuentas cuadren al centavo (dinero en centavos enteros, fechas en UTC), pero el programa no garantiza resultados libres de errores.</p>
+      <p><strong>8.2.</strong> En la medida permitida por la ley, el proveedor no responde por pérdidas de datos por falta de respaldos externos, por mal uso, por fallas del equipo, ni por decisiones comerciales o tributarias tomadas con base en los reportes.</p>
+
+      <h3>9. Terminación</h3>
+      <p><strong>9.1.</strong> Usted puede dejar de usar el programa cuando quiera y conservar sus datos locales y respaldos.</p>
+      <p><strong>9.2.</strong> El proveedor puede negar soporte o actualizaciones ante uso ilegal o reventa no autorizada del programa.</p>
+    </section>
+
+    <section class="legal-sec" id="privacidad" aria-label="Política de privacidad">
+      <h2>Parte B — Política de privacidad y tratamiento de datos personales (Ley 1581 de 2012, Colombia)</h2>
+
+      <h3>1. Responsables</h3>
+      <p><strong>1.1.</strong> Responsable de los datos operativos del negocio: el negocio que opera el POS.
+        Razón social / nombre: <span class="blank">[NOMBRE DEL NEGOCIO]</span> ·
+        NIT o cédula: <span class="blank">[NIT/CÉDULA]</span> ·
+        Dirección: <span class="blank">[DIRECCIÓN, CIUDAD]</span> ·
+        Correo para habeas data: <span class="blank">[CORREO DE CONTACTO]</span> ·
+        Teléfono: <span class="blank">[TELÉFONO]</span>.</p>
+      <p><strong>1.2.</strong> El proveedor del programa actúa como <strong>encargado técnico</strong> (provee la herramienta local y, si usted la activa, la conexión a su nube privada). No accede, no ve ni comercializa su información.</p>
+
+      <h3>2. Qué datos se recogen y dónde viven</h3>
+      <p><strong>2.1.</strong> Datos del negocio y sucursales: nombre, dirección, teléfono, logo, configuración, prefijos de documentos.</p>
+      <p><strong>2.2.</strong> Usuarios y empleados: nombre, usuario, rol, hash de contraseña (Argon2id, nunca en texto plano), sesiones locales, auditoría de acciones, cédula (enmascarada al mostrar), desempeño.</p>
+      <p><strong>2.3.</strong> Clientes (incluye fiado): nombre, teléfono, documento (si usted lo pide), cupo, fecha de promesa de pago, saldos, libro de movimientos (ventas a crédito, abonos, devoluciones), historial de compras.</p>
+      <p><strong>2.4.</strong> Proveedores y compras: nombre, NIT, contacto, saldos, órdenes, recepciones, pagos.</p>
+      <p><strong>2.5.</strong> Operación: productos, inventario y lotes, ventas, caja (aperturas, cierres, movimientos), gastos, devoluciones, cotizaciones, reportes, notificaciones internas.</p>
+      <p><strong>2.6.</strong> Datos técnicos locales: registros de errores, estado de sincronización, versiones instaladas. Las sesiones de usuario son <strong>locales</strong> a cada equipo y no viajan a la nube.</p>
+      <p><strong>2.7.</strong> Ubicación: primero en la base SQLite de <strong>su equipo</strong>. Solo si usted activa la sincronización, copia cifrada en tránsito hacia su proyecto privado de Supabase (PostgreSQL) con sus propias claves. El programa no envía su información a nadie más.</p>
+
+      <h3>3. Finalidades (para qué se usan los datos)</h3>
+      <p><strong>3.1.</strong> Operar el negocio: vender, cobrar, controlar caja e inventario, manejar fiado y proveedores, generar reportes.</p>
+      <p><strong>3.2.</strong> Seguridad: controlar accesos por roles, auditar cambios (quién hizo qué y cuándo), prevenir pérdidas.</p>
+      <p><strong>3.3.</strong> Respaldo y sincronización entre los equipos del propio negocio.</p>
+      <p><strong>3.4.</strong> NUNCA para vender datos, hacer publicidad de terceros ni perfilar clientes fuera del negocio. No hay telemetría ni rastreadores.</p>
+
+      <h3>4. Con quién se comparten</h3>
+      <p><strong>4.1.</strong> Con nadie, salvo: (a) su propia nube privada de Supabase si usted activa la sincronización; (b) la comprobación de versiones si usted configura una dirección de actualización; (c) orden de autoridad competente, caso en el cual el requerimiento recae sobre usted como responsable.</p>
+      <p><strong>4.2.</strong> El proveedor del programa no tiene acceso a su nube ni a sus datos.</p>
+
+      <h3>5. Seguridad</h3>
+      <p><strong>5.1.</strong> Contraseñas con Argon2id, bloqueo por intentos, sesiones locales, permisos por módulo y acción (ej. <code>sales.create</code>), verificación de permisos en el servicio (no solo en pantalla).</p>
+      <p><strong>5.2.</strong> Borrado lógico (<em>tombstones</em>) en tablas sincronizables para no perder trazabilidad; correlativos por sucursal; dinero en centavos.</p>
+      <p><strong>5.3.</strong> Respaldos ZIP con verificación de integridad (checksum) y cifrado opcional. Las credenciales de nube se guardan cifradas (Fernet).</p>
+      <p><strong>5.4.</strong> Ninguna medida es infalible: usted debe usar contraseñas fuertes, bloquear el equipo al ausentarse y limitar quién es administrador.</p>
+
+      <h3>6. Derechos del titular (habeas data) y cómo ejercerlos</h3>
+      <p><strong>6.1.</strong> Derechos: conocer, actualizar, rectificar y suprimir sus datos; revocar la autorización; pedir prueba de la autorización; ser informado del uso; presentar quejas ante la Superintendencia de Industria y Comercio (SIC).</p>
+      <p><strong>6.2.</strong> Cómo ejercerlos: escriba a <span class="blank">[CORREO DE CONTACTO]</span> con asunto “Habeas data”, indicando nombre, documento, qué derecho ejerce y a qué datos se refiere.</p>
+      <p><strong>6.3.</strong> Plazos legales (Colombia): consultas máximo 10 días hábiles; reclamos máximo 15 días hábiles. Supresión sujeta a deberes legales de conservación (p. ej. información contable/tributaria y auditoría del sistema).</p>
+      <p><strong>6.4.</strong> Los datos de clientes/empleados los gestiona cada negocio en su POS (ficha de cliente, desactivación, corrección de datos).</p>
+
+      <h3>7. Autorización</h3>
+      <p><strong>7.1.</strong> Al entregar sus datos al negocio (p. ej. para abrir fiado o como empleado/proveedor), usted autoriza su tratamiento para las finalidades del punto 3. El negocio debe conservar prueba de esa autorización (ver modelo al final).</p>
+      <p><strong>7.2.</strong> Al registrar el negocio en el programa, el dueño declara tener autorización para tratar los datos que ingresa.</p>
+
+      <h3>8. Menores de edad</h3>
+      <p><strong>8.1.</strong> No se recogen datos de menores como estrategia. Si un cliente o empleado es menor, solo se tratan los datos estrictamente necesarios con autorización de padres o representantes.</p>
+
+      <h3>9. Conservación</h3>
+      <p><strong>9.1.</strong> Los datos se conservan mientras dure la relación (cliente con saldo, empleado activo, proveedor con movimientos) y luego por los plazos legales y contables aplicables. La auditoría del sistema se conserva por seguridad y no se puede editar.</p>
+
+      <h3>10. Cambios a esta política</h3>
+      <p><strong>10.1.</strong> Versión actual 0.2.0 del 6 de octubre de 2026. Los cambios se informan en el programa o en <span class="blank">[SITIO/CANAL OFICIAL]</span> indicando la nueva versión y fecha. El uso posterior del programa implica aceptación.</p>
+
+      <h3>11. Contacto</h3>
+      <p>Razón social: <span class="blank">[NOMBRE DEL NEGOCIO O PROVEEDOR, SEGÚN APLIQUE]</span><br />
+        Correo habeas data y notificaciones: <a href="mailto:jesusdramirez26@gmail.com">jesusdramirez26@gmail.com</a><br />
+        Dirección y teléfono: <span class="blank">[DIRECCIÓN]</span> · +57 323 285 1942 · <span class="blank">[CIUDAD, COLOMBIA]</span><br />
+        Superintendencia de Industria y Comercio (SIC): www.sic.gov.co (autoridad de protección de datos en Colombia; se cita como referencia pública, no como vínculo contractual).</p>
+    </section>
+
+    <section class="legal-sec" aria-label="Modelo de autorización">
+      <h2>Modelo de autorización para clientes (fiado) — entregar o leer en caja</h2>
+      <p>Yo, <span class="blank">[NOMBRE DEL CLIENTE]</span>, identificado con <span class="blank">[TIPO Y NÚMERO DE DOCUMENTO]</span>,
+        autorizo a <span class="blank">[NOMBRE DEL NEGOCIO]</span> a tratar mis datos personales (nombre, teléfono, documento, cupo,
+        saldos y movimientos de fiado) para gestionar mis compras a crédito, abonos, devoluciones y cobranza, incluyendo el
+        recordatorio de mi fecha prometida de pago. Declaro que fui informado de mis derechos de habeas data, del correo
+        <span class="blank">[CORREO DE CONTACTO]</span> para ejercerlos y de que puedo revocar esta autorización cuando no exista
+        saldo pendiente ni obligación legal en contrario.</p>
+      <p>Firma: ______________________ Fecha: ____/____/________<br />
+        (Aplique lo mismo, adaptado, para empleados y proveedores.)</p>
+    </section>
+
+    <section class="legal-sec" aria-label="Aceptación">
+      <h2>Aceptación</h2>
+      <p>Al pulsar “Acepto” en el instalador o al registrar el negocio en el programa, usted confirma que leyó estos términos y esta política,
+        que completó los datos entre corchetes para su negocio y que cuenta con las autorizaciones de las personas cuyos datos ingresa al sistema.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-base">
+        <span>© <span id="year">2026</span> Yisus D Nexus · Yisus D Dev. Todos los derechos reservados.</span>
+        <span><a href="index.html" style="color:#94a3b8">Volver al inicio</a></span>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

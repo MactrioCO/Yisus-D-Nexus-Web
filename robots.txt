@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap: se agregará aquí cuando el sitio tenga dominio propio.
+# Sitemap: https://TU-DOMINIO/sitemap.xml

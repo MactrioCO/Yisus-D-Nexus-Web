@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  YISUS D NEXUS — Landing Page oficial
+  Estática · sin dependencias · sin dominio propio por ahora
+  ------------------------------------------------------------
+  PARA REEMPLAZAR RECURSOS (logos, capturas, demo):
+  1. Lee el README.md de esta carpeta.
+  2. Los datos editables están en site.config.js.
+  Busca la marca [REEMPLAZAR] para hallar cada placeholder.
+============================================================= -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yisus D Nexus — El centro de control para tu negocio de barrio | POS offline-first</title>
+  <meta name="description" content="Yisus D Nexus es el POS modular offline-first para tiendas de barrio, minimercados, papelerías, ferreterías y ropa: ventas, inventario, caja, clientes con fiado, reportes y sincronización en la nube. Funciona sin internet." />
+  <meta name="keywords" content="POS, punto de venta, software tienda de barrio, inventario, facturación, minimercado, papelería, ferretería, offline-first, Yisus D Nexus" />
+  <meta name="author" content="Yisus D Dev" />
+  <meta name="theme-color" content="#0b1526" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Yisus D Nexus" />
+  <meta property="og:title" content="Yisus D Nexus — El centro de control para tu negocio" />
+  <meta property="og:description" content="POS modular que vende aunque se caiga internet: ventas, inventario, caja, fiado, reportes y nube." />
+  <!-- og:image: usar URL absoluta cuando haya dominio propio -->
+  <meta property="og:image" content="assets/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <!-- [REEMPLAZAR] favicon definitivo cuando exista el set final -->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#inicio">Saltar al contenido</a>
+
+  <!-- Iconos reutilizables (sprite SVG inline, sin librerías) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-pos" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M7 9h4M7 12h7"/></symbol>
+      <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8zM3 8l9 5 9-5M12 13v8"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5M16 4.6a3.5 3.5 0 010 6.8M17.5 15.2c2 .6 3.2 2.1 3.9 4.8"/></symbol>
+      <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5h.01M18 14.5h.01"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></symbol>
+      <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2.5h8L19.5 8v13.5h-13.5V2.5zM14 2.5V8h5.5M9 12h6M9 15.5h6"/></symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24"><path d="M1.5 6h13v11h-13zM14.5 10h4l4 4v3h-8M5.5 20a2 2 0 100-4 2 2 0 000 4zM18.5 20a2 2 0 100-4 2 2 0 000 4z"/></symbol>
+      <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 9V6.5A1.5 1.5 0 014.5 5h15A1.5 1.5 0 0121 6.5V9a2.5 2.5 0 000 6v2.5a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 17.5V15a2.5 2.5 0 000-6zM13 5v2M13 11v2M13 17v2"/></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 01-.4-9A6 6 0 0118.2 10 3.8 3.8 0 0117.5 18H7z"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></symbol>
+      <symbol id="i-shop" viewBox="0 0 24 24"><path d="M4 7l1.5-3.5h13L20 7M4 7h16v2a2.5 2.5 0 01-5 0 2.5 2.5 0 01-5 0 2.5 2.5 0 01-5 0V7zM5.5 11.5V20h13v-8.5M9.5 20v-5h5v5"/></symbol>
+      <symbol id="i-xls" viewBox="0 0 24 24"><path d="M6 2.5h8L19.5 8v13.5h-13.5V2.5zM14 2.5V8h5.5M9.5 12.5l5 5M14.5 12.5l-5 5"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- LOADING SCREEN -->
+  <div class="loader" id="loader" role="status" aria-label="Cargando Yisus D Nexus">
+    <div class="loader-inner">
+      <div class="loader-logo"><img src="assets/logo.png" alt="Logo de Yisus D Nexus" width="120" height="120" /></div>
+      <div class="loader-name">YISUS&nbsp;D&nbsp;NEXUS</div>
+      <div class="loader-title">NE<span>X</span>US</div>
+      <div class="loader-bar"><i></i></div>
+      <div class="loader-sub" id="loaderMsg">Conectando módulos…</div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="nav" id="navbar">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#inicio" aria-label="Yisus D Nexus — inicio">
+        <img src="assets/logo.png" alt="Logo de Yisus D Nexus" width="40" height="40" />
+        <span><b>Yisus D Nexus</b><small>POS · OFFLINE-FIRST</small></span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#inicio" class="active">Inicio</a></li>
+          <li><a href="#que-es">Qué es</a></li>
+          <li><a href="#modulos">Módulos</a></li>
+          <li><a href="#funciones">Funciones</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#demo">Demo</a></li>
+          <li><a href="#faq">Preguntas</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-primary btn-sm nav-cta" href="#demo" data-demo-link>Descargar demo</a>
+      <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- HERO -->
+    <section class="hero" aria-label="Presentación">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="pill reveal"><span class="dot"></span><span data-version>v0.2.0 · Windows · Instalador .exe</span></span>
+          <h1 class="reveal d1">El centro de control <span class="grad">para tu negocio de barrio.</span></h1>
+          <p class="lead reveal d2">Yisus D Nexus es el punto de venta modular que cobra, controla inventario y caja, maneja el fiado y genera reportes — <strong>funcionando al 100&nbsp;% sin internet.</strong> Si la conexión se cae, tu tienda sigue vendiendo.</p>
+          <div class="hero-cta reveal d3">
+            <a class="btn btn-primary" href="#demo" data-demo-link>⬇ Descargar demo</a>
+            <a class="btn btn-ghost" href="#modulos">Ver módulos</a>
+          </div>
+          <p class="hero-note reveal d3">Demo gratuita para PC · Sin suscripciones · Tus datos se quedan en tu equipo</p>
+          <div class="hero-stats reveal d4">
+            <div class="hstat"><b data-count="20">20+</b><span>módulos reales</span></div>
+            <div class="hstat"><b data-count="16">16</b><span>reportes en local</span></div>
+            <div class="hstat"><b data-count="100">100%</b><span>offline-first</span></div>
+            <div class="hstat"><b data-count="14">14</b><span>gráficos de gestión</span></div>
+          </div>
+        </div>
+        <div class="mock reveal d2" aria-label="Vista previa del programa">
+          <!-- [REEMPLAZAR] HERO-SHOT: guarda tu captura en captures/pos-ventas.png
+               y regístrala en site.config.js → screenshots.hero.
+               El mock de abajo se oculta automáticamente. -->
+          <div class="mock-window" id="heroMock">
+            <div class="mock-bar"><i></i><i></i><i></i><em>yisus-d-nexus · ventas / pos</em></div>
+            <div class="mock-shot"><img id="heroShot" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Captura real del punto de venta Yisus D Nexus" loading="lazy" /></div>
+            <div class="mock-body">
+              <div class="mock-side">
+                <div class="ms-logo"><img src="assets/title_bar.png" alt="" width="26" height="26" /> Nexus</div>
+                <span class="on">◉ Ventas</span><span>▦ Productos</span><span>⧉ Inventario</span><span>◍ Clientes</span><span>▤ Caja</span><span>◫ Reportes</span>
+              </div>
+              <div class="mock-main">
+                <div class="mock-cards">
+                  <div class="mcard"><small>VENTAS HOY</small><b class="up">$ 248.500</b></div>
+                  <div class="mcard"><small>TICKETS</small><b>37</b></div>
+                  <div class="mcard"><small>CAJA</small><b class="up">Abierta ✓</b></div>
+                </div>
+                <div class="mock-table">
+                  <div class="mh"><span>Producto</span><span>Cant.</span><span>Total</span></div>
+                  <div><span>Arroz × 500 g</span><span>2</span><span>$ 5.200</span></div>
+                  <div><span>Aceite × 900 ml</span><span>1</span><span>$ 9.480</span></div>
+                  <div><span>Cuaderno cosido</span><span>3</span><span>$ 14.700</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-float mf-1">✅ Ticket impreso<small>P-000001 · 48 columnas</small></div>
+          <div class="mock-float mf-2">📴 Venta sin internet<small>se sincroniza luego</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIRA DE CONFIANZA -->
+    <div class="trust" aria-label="Tecnologías">
+      <div class="wrap trust-inner">
+        <span><b>Python 3.12</b> + Flet</span><span><b>SQLite</b> local</span><span><b>Supabase</b> espejo</span><span>Ticket térmico <b>ESC/POS</b></span><span><b>Excel</b> importar / exportar</span><span>Instalador <b>Windows</b></span>
+      </div>
+    </div>
+
+    <!-- ¿QUÉ ES? -->
+    <section class="section" id="que-es" aria-label="Qué es Yisus D Nexus">
+      <div class="wrap">
+        <span class="eyebrow reveal">¿QUÉ ES?</span>
+        <h2 class="sec-title reveal">Del cuaderno al control total, <br />sin depender de internet.</h2>
+        <p class="sec-sub reveal">Miles de negocios de barrio anotan ventas en un cuaderno, pierden la cuenta del fiado y nunca saben cuánto ganaron. Yisus D Nexus nació para eso: un programa de PC, simple de aprender y potente por dentro.</p>
+        <div class="vs-grid">
+          <div class="vs-card bad reveal">
+            <h3>📒 Como operan hoy muchos negocios</h3>
+            <ul>
+              <li><i>✕</i> Ventas y fiados anotados en libreta — se borran, se pierden, se discuten.</li>
+              <li><i>✕</i> Nadie sabe cuánto se vendió ni cuánto se ganó en el día.</li>
+              <li><i>✕</i> Inventario contado a mano, casi nunca cuadra.</li>
+              <li><i>✕</i> Si se va el internet, los sistemas en la nube dejan la caja muerta.</li>
+              <li><i>✕</i> Software comercial caro, con mensualidad y funciones que no usan.</li>
+            </ul>
+          </div>
+          <div class="vs-card good reveal d1">
+            <h3>✅ Con Yisus D Nexus</h3>
+            <ul>
+              <li><i>✓</i> <strong>Offline-first:</strong> la venta nunca se detiene; la nube es solo espejo y respaldo.</li>
+              <li><i>✓</i> <strong>Cobro en segundos:</strong> buscador, escáner de código de barras y pagos mixtos (efectivo, Nequi, Daviplata, tarjeta, transferencia, fiado).</li>
+              <li><i>✓</i> <strong>Inventario vivo:</strong> stock por sucursal, lotes con vencimiento (FEFO), mermas y recuento físico.</li>
+              <li><i>✓</i> <strong>Fiado bajo control:</strong> cupos, fecha de promesa de pago y abonos parciales.</li>
+              <li><i>✓</i> <strong>Dueño informado:</strong> dashboard, 16 reportes y 14 gráficos, todo en local y en segundos.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="audience reveal" aria-label="Negocios para los que sirve">
+          <span>👕 Tiendas de ropa</span><span>📚 Papelerías</span><span>🛒 Minimercados</span><span>🔧 Ferreterías</span><span>🧺 Misceláneas</span><span>🏪 Tiendas de barrio</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULOS -->
+    <section class="section alt" id="modulos" aria-label="Módulos del sistema">
+      <div class="wrap">
+        <div class="center">
+          <span class="eyebrow reveal">MÓDULOS REALES</span>
+          <h2 class="sec-title reveal">Todo el negocio, en un solo programa.</h2>
+          <p class="sec-sub reveal">Cada módulo existe y funciona dentro del programa. Se activan o apagan según tu tipo de negocio: una tienda de ropa no ve balanzas, una papelería no ve lo que no usa.</p>
+        </div>
+        <div class="mod-grid">
+          <article class="mod reveal"><div class="mod-ico"><svg><use href="#i-pos"/></svg></div><h3>Ventas POS</h3><p>Buscador + escáner, carrito con descuentos, pagos mixtos y recibo por sucursal (P-000001).</p></article>
+          <article class="mod reveal d1"><div class="mod-ico"><svg><use href="#i-box"/></svg></div><h3>Productos</h3><p>Catálogo con variantes, categorías en 2 niveles, costo promedio y códigos de barras.</p></article>
+          <article class="mod reveal d2"><div class="mod-ico"><svg><use href="#i-shop"/></svg></div><h3>Inventario</h3><p>Stock por sucursal, mermas con motivo, recuento físico y lotes con vencimiento (FEFO).</p></article>
+          <article class="mod reveal d3"><div class="mod-ico"><svg><use href="#i-users"/></svg></div><h3>Clientes y fiado</h3><p>Cupos, fecha promesa de pago, abonos parciales y top de deudores en el dashboard.</p></article>
+          <article class="mod reveal"><div class="mod-ico"><svg><use href="#i-cash"/></svg></div><h3>Caja y pagos</h3><p>Apertura y cierre con arqueo, movimientos manuales, efectivo, Nequi, Daviplata, tarjeta y transferencia.</p></article>
+          <article class="mod reveal d1"><div class="mod-ico"><svg><use href="#i-truck"/></svg></div><h3>Proveedores y compras</h3><p>Órdenes, recepción con costo promedio, pagos parciales FIFO y devoluciones a proveedor.</p></article>
+          <article class="mod reveal d2"><div class="mod-ico"><svg><use href="#i-ticket"/></svg></div><h3>Ticket y factura</h3><p>Ticket térmico ESC/POS de 48/64 columnas, factura A4 en PDF y nota crédito.</p></article>
+          <article class="mod reveal d3"><div class="mod-ico"><svg><use href="#i-doc"/></svg></div><h3>Cotizaciones</h3><p>Borrador → enviada → aceptada → convertida a venta en un clic, con precios congelados.</p></article>
+          <article class="mod reveal"><div class="mod-ico"><svg><use href="#i-chart"/></svg></div><h3>Dashboard y reportes</h3><p>KPIs, lo más vendido y 16 reportes exportables a CSV con filtro por sucursal.</p></article>
+          <article class="mod reveal d1"><div class="mod-ico"><svg><use href="#i-users"/></svg></div><h3>Empleados</h3><p>Ficha con cédula enmascarada, vínculo a usuario del sistema y desempeño en ventas.</p></article>
+          <article class="mod reveal d2"><div class="mod-ico"><svg><use href="#i-xls"/></svg></div><h3>Importar / Exportar Excel</h3><p>Plantilla oficial, vista previa con errores por línea y ciclo exportar → editar → importar.</p></article>
+          <article class="mod more reveal d3"><h3>+ Sucursales, gastos, devoluciones, backups y nube</h3><p>Traspasos entre sedes, control de gastos, devoluciones trazables, respaldos cifrados y sync Supabase.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUNCIONES · BENTO -->
+    <section class="section" id="funciones" aria-label="Funcionalidades destacadas">
+      <div class="wrap">
+        <span class="eyebrow reveal">FUNCIONALIDADES</span>
+        <h2 class="sec-title reveal">Potente por dentro, simple por fuera.</h2>
+        <p class="sec-sub reveal">Diseñado para que cualquier persona del negocio aprenda a cobrar en minutos, con la solidez que el dueño necesita.</p>
+        <div class="bento">
+          <div class="bcell b-4 b-dark reveal">
+            <span class="big">📴</span>
+            <h3>Offline-first de verdad</h3>
+            <p>La fuente de verdad es tu SQLite local: operas 30 días sin internet sin perder un solo dato. Cuando vuelve la conexión, todo se sincroniza con Supabase.</p>
+            <div class="bcode">local vende → nube espeja · LWW con la nube como árbitro · reintentos con backoff</div>
+          </div>
+          <div class="bcell b-2 reveal d1">
+            <span class="big">🔐</span>
+            <h3>Seguridad propia</h3>
+            <p>Login con Argon2id, sesiones locales, roles y permisos por acción (ventas.crear), bloqueo por intentos y auditoría completa.</p>
+          </div>
+          <div class="bcell b-2 reveal">
+            <span class="big">📊</span>
+            <h3>14 gráficos de gestión</h3>
+            <p>Tendencias, rotación, productos muertos y antigüedad de stock para decidir qué pedir y qué liquidar.</p>
+          </div>
+          <div class="bcell b-2 reveal d1">
+            <span class="big">⏳</span>
+            <h3>Vencimientos FEFO</h3>
+            <p>Lotes con fecha, consumo del que vence primero y panel “Por vencer” con merma en un clic.</p>
+          </div>
+          <div class="bcell b-2 reveal d2">
+            <span class="big">🤝</span>
+            <h3>Fiado con promesa</h3>
+            <p>Cupo por cliente, fecha promesa de pago con aviso al dueño y paz y salvo automático al quedar al día.</p>
+          </div>
+          <div class="bcell b-3 reveal">
+            <span class="big">🖨️</span>
+            <h3>Hardware incluido</h3>
+            <p>Tickets térmicos, apertura de cajón, escáner de código de barras y balanzas. Vista previa antes de imprimir y reintento sin bloquear la venta.</p>
+          </div>
+          <div class="bcell b-3 reveal d1">
+            <span class="big">💾</span>
+            <h3>Respaldos y actualizaciones</h3>
+            <p>ZIP con checksum y cifrado opcional, restauración verificada y actualizador por USB o nube con respaldo obligatorio previo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREVIEW DEL SOFTWARE -->
+    <section class="section alt" id="preview" aria-label="Capturas del programa">
+      <div class="wrap">
+        <div class="center">
+          <span class="eyebrow reveal">EL PROGRAMA</span>
+          <h2 class="sec-title reveal">Míralo en acción.</h2>
+          <p class="sec-sub reveal">Capturas reales del programa, tomadas en Windows en modo oscuro.</p>
+        </div>
+        <div class="shots" id="shots">
+          <figure class="shot reveal"><img src="captures/login.png" alt="Pantalla de acceso de Yisus D Nexus" loading="lazy" /><figcaption><strong>Acceso seguro</strong>Login propio con usuarios y roles; tus datos viven en tu equipo.</figcaption></figure>
+          <figure class="shot reveal d1"><img src="captures/dashboard.png" alt="Dashboard principal de Yisus D Nexus" loading="lazy" /><figcaption><strong>Dashboard del dueño</strong>Ventas, ticket promedio, ganancia, caja y alertas del día.</figcaption></figure>
+          <figure class="shot reveal"><img src="captures/productos.png" alt="Catálogo de productos de Yisus D Nexus" loading="lazy" /><figcaption><strong>Catálogo de productos</strong>Búsqueda, categorías, stock y valor del inventario.</figcaption></figure>
+          <figure class="shot reveal d1"><img src="captures/clientes.png" alt="Lista de clientes de Yisus D Nexus" loading="lazy" /><figcaption><strong>Clientes y fiado</strong>Saldos, cupos y abonos: el fiado sin cuaderno.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section class="section" id="como-funciona" aria-label="Cómo funciona">
+      <div class="wrap">
+        <div class="center">
+          <span class="eyebrow reveal">CÓMO FUNCIONA</span>
+          <h2 class="sec-title reveal">De instalado a vendiendo, en 5 pasos.</h2>
+        </div>
+        <div class="steps" style="margin-top:44px">
+          <div class="step reveal"><b class="num">01</b><h3>Instala en tu PC</h3><p>Ejecuta el instalador Windows y crea tu negocio con el asistente inicial. Sin cuentas externas.</p></div>
+          <div class="step reveal d1"><b class="num">02</b><h3>Registra tus productos</h3><p>Cárgalos a mano o impórtalos desde Excel con la plantilla oficial y su vista previa.</p></div>
+          <div class="step reveal d2"><b class="num">03</b><h3>Abre caja y vende</h3><p>Escanea, cobra en efectivo o pagos mixtos, imprime el ticket y controla el cambio.</p></div>
+          <div class="step reveal d3"><b class="num">04</b><h3>Controla inventario y fiado</h3><p>El stock se descuenta solo; el fiado queda con cupo, promesa y abonos.</p></div>
+          <div class="step reveal d4"><b class="num">05</b><h3>Cierra y analiza</h3><p>Arqueo con diferencias auditadas, dashboard del día y reportes en CSV.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEMO -->
+    <section class="section" id="demo" aria-label="Demostración y descarga">
+      <div class="wrap">
+        <div class="demo reveal">
+          <div>
+            <span class="eyebrow" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">PRUÉBALO</span>
+            <h2>Conoce Yisus D Nexus en tu propio PC.</h2>
+            <p>Descarga la versión demo para Windows, instálala y vende, registra productos y prueba la caja con datos de ejemplo. Sin internet, sin tarjeta, sin compromiso.</p>
+            <div class="demo-cta">
+              <a class="btn btn-light" href="#" data-demo-link>⬇ Descargar versión demo</a>
+              <a class="btn btn-outline-w" href="#como-funciona">Cómo se usa</a>
+            </div>
+            <!-- Demo activa vía GitHub Release (ver site.config.js → demo).
+                 Si publicas otra versión, sube el .exe al Release y cambia la URL allí. -->
+            <div class="demo-creds">Entra con el usuario <code>demo</code> y la contraseña <code>Demo1234</code></div>
+            <small class="note" data-demo-note>Instalador para Windows (.exe).</small>
+          </div>
+          <div>
+            <!-- [REEMPLAZAR] VIDEO-DEMO: sube demo.mp4 (o GIF) a captures/ y cámbialo por <video>. -->
+            <div class="video-ph"><span class="play">▶</span><strong>Video demo del sistema</strong><span style="font-size:13px;color:#93c5fd">captures/demo.mp4 · 1920×1080</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="section" aria-label="Llamado a la acción">
+      <div class="wrap">
+        <div class="cta-final reveal">
+          <h2>Tu negocio, por fin bajo control.</h2>
+          <p>Únete a los negocios de barrio que ya dejaron el cuaderno: cobra rápido, cuadra la caja y sabe cuánto ganas cada día.</p>
+          <div class="demo-cta" style="justify-content:center">
+            <a class="btn btn-light" href="#demo" data-demo-link>⬇ Descargar demo gratis</a>
+            <a class="btn btn-outline-w" href="#contacto">Hablar con nosotros</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section alt" id="faq" aria-label="Preguntas frecuentes">
+      <div class="wrap">
+        <div class="center">
+          <span class="eyebrow reveal">PREGUNTAS FRECUENTES</span>
+          <h2 class="sec-title reveal">Lo que siempre preguntan.</h2>
+          <p class="sec-sub reveal">Respuestas basadas en cómo funciona realmente el programa.</p>
+        </div>
+        <div class="faq">
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Qué es Yisus D Nexus?<span class="x">+</span></button><div class="faq-a"><p>Un punto de venta (POS) modular para PC que gestiona ventas, productos, inventario, caja, clientes con fiado, proveedores, compras, gastos, cotizaciones, reportes y más — todo en un solo programa.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Para qué negocios sirve?<span class="x">+</span></button><div class="faq-a"><p>Tiendas de barrio, ropa, papelerías, minimercados, ferreterías y misceláneas. Los módulos se activan según tu tipo de negocio para mostrarte solo lo que usas.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Funciona sin internet?<span class="x">+</span></button><div class="faq-a"><p>Sí, al 100 %. Es offline-first: tu base de datos local es la fuente de verdad y puedes operar semanas sin conexión. Cuando vuelve internet, los cambios se sincronizan con la nube (Supabase) como espejo y respaldo.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Qué necesito para usarlo?<span class="x">+</span></button><div class="faq-a"><p>Un PC con Windows. Opcional pero recomendado: lector de código de barras, impresora térmica de tickets (ESC/POS) y cajón de dinero para una experiencia completa de caja.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Puedo importar y exportar mi información?<span class="x">+</span></button><div class="faq-a"><p>Sí. Productos y clientes se importan desde Excel con plantilla oficial y vista previa de errores, y los reportes se exportan a CSV. Además hay respaldos ZIP con verificación y cifrado opcional.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Maneja fiado y cuentas por cobrar?<span class="x">+</span></button><div class="faq-a"><p>Sí. Cada cliente tiene cupo y saldo, las ventas a crédito alimentan su cuenta, puedes registrar abonos parciales y programar fecha promesa de pago con aviso al dueño.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Tiene factura electrónica de la DIAN?<span class="x">+</span></button><div class="faq-a"><p>Todavía no. Hoy emite recibos, tickets térmicos, factura en PDF y notas crédito. La facturación electrónica DIAN está en el plan futuro del producto.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q" aria-expanded="false">¿Existe versión demo? ¿Cómo obtengo el programa?<span class="x">+</span></button><div class="faq-a"><p>Sí, habrá una versión demo descargable para Windows desde la sección “Demo” de esta página. Para licencias y acompañamiento, escríbenos por la sección Contacto.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="section" id="contacto" aria-label="Contacto">
+      <div class="wrap">
+        <span class="eyebrow reveal">CONTACTO</span>
+        <h2 class="sec-title reveal">Hablemos de tu negocio.</h2>
+        <p class="sec-sub reveal">Escríbenos para la demo, licencias o soporte. Respondemos por WhatsApp y correo.</p>
+        <div class="contact-grid">
+          <div class="contact-card reveal">
+            <h3>Canales directos</h3>
+            <a class="c-row" data-contact="whatsapp" href="https://api.whatsapp.com/send/?phone=573232851942&text&type=phone_number&app_absent=0" target="_blank" rel="noopener"><span class="ci">💬</span><span>WhatsApp<small data-contact-label="whatsapp">+57 323 285 1942</small></span></a>
+            <a class="c-row" data-contact="email" href="mailto:jesusdramirez26@gmail.com"><span class="ci">✉️</span><span>Correo<small data-contact-label="email">jesusdramirez26@gmail.com</small></span></a>
+          </div>
+          <div class="sys-card reveal d1">
+            <h3>Requisitos del sistema</h3>
+            <p>Lo que necesita tu equipo para correr Yisus D Nexus.</p>
+            <ul>
+              <li>🖥️ &nbsp;PC con Windows 10 / 11 (64 bits)</li>
+              <li>📴 &nbsp;Internet opcional — solo para nube y actualizaciones</li>
+              <li>🖨️ &nbsp;Impresora térmica ESC/POS (opcional, recomendada)</li>
+              <li>🔫 &nbsp;Lector de código de barras USB (opcional)</li>
+              <li>💾 &nbsp;Respaldo local + espejo en Supabase</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="foot-brand"><img src="assets/logo.png" alt="Logo de Yisus D Nexus" width="38" height="38" /> Yisus D Nexus</div>
+          <p>POS modular offline-first para negocios de barrio. Cobra, controla y crece — con o sin internet.</p>
+          <p style="color:#64748b">Hecho con 💙 en Colombia 🇨🇴</p>
+        </div>
+        <div><h4>PRODUCTO</h4><ul><li><a href="#que-es">Qué es</a></li><li><a href="#modulos">Módulos</a></li><li><a href="#funciones">Funciones</a></li><li><a href="#demo">Descargar demo</a></li></ul></div>
+        <div><h4>AYUDA</h4><ul><li><a href="#como-funciona">Cómo funciona</a></li><li><a href="#faq">Preguntas frecuentes</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#preview">Capturas</a></li></ul></div>
+        <div><h4>LEGAL</h4><ul><li><a href="legal.html#privacidad">Política de privacidad</a></li><li><a href="legal.html#terminos">Términos y condiciones</a></li></ul></div>
+      </div>
+      <div class="foot-base">
+        <span>© <span id="year">2026</span> Yisus D Nexus · Yisus D Dev. Todos los derechos reservados.</span>
+        <span>POS offline-first · Windows</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="site.config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
