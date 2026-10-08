@@ -352,6 +352,9 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   .nav-cta { display: none; }
   body.menu-open { overflow: hidden; }
 }
+@media (min-width: 1021px) {
+  .nav-links [data-nav-m] { display: none; }
+}
 @media (max-width: 600px) {
   .wrap { width: min(var(--max), 100% - 32px); }
   .section { padding: 64px 0; }
