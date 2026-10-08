@@ -69,6 +69,17 @@ privadas rebotan al inicio si no hay permiso:
 - Si el CDN de Supabase falla, los módulos no corren y el contenido
   sensible queda oculto (denegado por defecto).
 
+## Licencias por solicitud (customer pide, owner aprueba)
+
+- El customer pide desde `novedades.html` → **Mi licencia** (una sola
+  solicitud pendiente por cuenta, índice parcial `uq_license_pending`).
+- La fila nace `pending` + inactiva (no valida). El owner la ve en
+  `panel.html` → **Solicitudes pendientes** con negocio/correo y la
+  **Acepta** (activa) o **Rechaza**. También puede emitir directas.
+- RLS: el customer solo inserta la suya (`requested_by` propio, formato
+  de clave, sin activarse) y solo lee las suyas; jamás se auto-aprueba
+  (sin policy de UPDATE). El owner lo ve y edita todo.
+
 ## Probar la validación de licencias
 
 `panel.html` → Licencias → genera una clave → usa **Probar validación**.

@@ -37,6 +37,10 @@
       <span class="eyebrow">NOVEDADES</span>
       <h2 class="sec-title">Qué se actualizó.</h2>
       <p class="sec-sub" id="hello">Historial de versiones publicadas para tu negocio.</p>
+      <div class="form-card" id="licCard">
+        <h3 style="margin-top:0">Mi licencia</h3>
+        <div id="licBody">Cargando…</div>
+      </div>
       <div class="alert info" id="loading">Cargando novedades…</div>
       <div id="rels"></div>
       <div class="demo-cta" style="justify-content:flex-start;margin-top:8px">
@@ -66,6 +70,57 @@
     });
     const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
+    function genKey() {
+      const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      const g = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n))).map((x) => A[x % A.length]).join("");
+      return "YDNX-" + g(4) + "-" + g(4);
+    }
+    async function loadLicense(user, profile) {
+      const box = document.getElementById("licBody");
+      try {
+        const { data, error } = await sb
+          .from("landing_licenses")
+          .select("*")
+          .eq("requested_by", user.id)
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        const rows = data || [];
+        const approved = rows.find((l) => l.status === "approved" && l.active);
+        const pending = rows.find((l) => l.status === "pending");
+        if (approved) {
+          box.innerHTML = `<div class="alert ok" style="margin-bottom:12px">✅ Licencia <strong>activa</strong>. Úsala al instalar el programa.</div>
+            <p><code id="licKey" style="font-size:17px">${esc(approved.key)}</code></p>
+            <button class="btn btn-ghost btn-sm" id="btnCopyLic" type="button">Copiar clave</button>`;
+          document.getElementById("btnCopyLic").addEventListener("click", async () => {
+            try { await navigator.clipboard.writeText(approved.key); } catch (_) {}
+          });
+        } else if (pending) {
+          box.innerHTML = `<div class="alert info" style="margin-bottom:0">⏳ Solicitud <strong>en revisión</strong>. Te avisamos cuando el administrador la apruebe.</div>`;
+        } else {
+          const rej = rows.find((l) => l.status === "rejected");
+          box.innerHTML = `${rej ? `<div class="alert err">La solicitud anterior fue rechazada. Si crees que es un error, escríbenos por WhatsApp.</div>` : `<p class="muted">Todavía no tienes licencia. Pídela y el administrador la revisa.</p>`}
+            <button class="btn btn-primary btn-sm" id="btnReqLic" type="button">Solicitar licencia</button>`;
+          document.getElementById("btnReqLic").addEventListener("click", async () => {
+            box.innerHTML = "Enviando solicitud…";
+            const { error: insErr } = await sb.from("landing_licenses").insert({
+              key: genKey(),
+              requested_by: user.id,
+              status: "pending",
+              active: false,
+              notes: (profile.business_name || "") + " (" + user.email + ")",
+            });
+            if (insErr) {
+              box.innerHTML = `<div class="alert err">No se pudo registrar: ${esc(insErr.message)}</div>`;
+              return;
+            }
+            loadLicense(user, profile);
+          });
+        }
+      } catch (e) {
+        box.innerHTML = `<div class="alert err">No se pudo cargar: ${esc(niceErr(e))}</div>`;
+      }
+    }
+
     (async () => {
       const loading = document.getElementById("loading");
       try {
@@ -74,6 +129,7 @@
         if (!profile || !profile.active) { deny("pending"); return; }
         document.getElementById("hello").textContent =
           "Historial de versiones para " + (profile.business_name || user.email) + ".";
+        loadLicense(user, profile);
         const { data, error } = await sb
           .from("landing_releases")
           .select("version,changelog,created_at")

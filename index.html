@@ -141,6 +141,14 @@
       </div>
     </section>
 
+    <div class="wrap">
+      <div class="news-strip" id="newsStrip" hidden>
+        <span class="pill"><span class="dot"></span>NOVEDADES</span>
+        <p id="newsText"></p>
+        <a href="novedades.html" class="btn btn-ghost btn-sm">Ver historial</a>
+      </div>
+    </div>
+
     <!-- TIRA DE CONFIANZA -->
     <div class="trust" aria-label="Tecnologías">
       <div class="wrap trust-inner">
@@ -409,6 +417,29 @@
       t.classList.add("show");
       setTimeout(function () { t.classList.remove("show"); }, 4200);
       history.replaceState(null, "", location.pathname);
+    })();
+  </script>
+  <script src="js/sb-config.js?v=2"></script>
+  <script type="module">
+    /* Tira de novedades del hero (última versión publicada, lectura pública). */
+    import { sb } from "./js/sb.js?v=2";
+    (async () => {
+      try {
+        const clean = (s) => String(s ?? "").replace(/[<>&"]/g, "");
+        const { data, error } = await sb
+          .from("landing_releases")
+          .select("version,changelog")
+          .eq("published", true)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (error || !data) return;
+        const t = document.getElementById("newsText");
+        const s = document.getElementById("newsStrip");
+        if (!t || !s) return;
+        t.innerHTML = "<strong>v" + clean(data.version) + "</strong> — " + clean(data.changelog).slice(0, 140);
+        s.hidden = false;
+      } catch (_) { /* sin novedades si falla */ }
     })();
   </script>
 </body>

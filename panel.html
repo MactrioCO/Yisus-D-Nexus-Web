@@ -95,7 +95,7 @@
         <!-- LICENCIAS -->
         <section id="tab-licenses" hidden>
           <form class="form-card" id="formLic">
-            <h3 style="margin-top:0">Nueva licencia</h3>
+            <h3 style="margin-top:0">Emitir licencia directa</h3>
             <div class="grid2">
               <label class="field">Notas (para quién es)
                 <input type="text" name="notes" maxlength="200" placeholder="Tienda La Esquina" />
@@ -106,6 +106,12 @@
             </div>
             <button class="btn btn-primary btn-sm" type="submit" id="btnLic">Generar clave</button>
           </form>
+          <h3 style="margin-top:26px">Solicitudes pendientes</h3>
+          <div class="table-wrap"><table class="admin">
+            <thead><tr><th>Negocio / correo</th><th>Clave solicitada</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="licReqBody"><tr><td colspan="4">Cargando…</td></tr></tbody>
+          </table></div>
+          <h3 style="margin-top:26px">Licencias emitidas</h3>
           <div class="table-wrap"><table class="admin">
             <thead><tr><th>Clave</th><th>Negocio</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr></thead>
             <tbody id="licBody"><tr><td colspan="5">Cargando…</td></tr></tbody>
@@ -346,22 +352,52 @@
       const g = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n))).map((x) => A[x % A.length]).join("");
       return "YDNX-" + g(4) + "-" + g(4);
     }
+    let USERS_CACHE = null;
+    async function usersMap() {
+      if (!USERS_CACHE) {
+        const { data, error } = await sb.from("landing_users").select("id,email,business_name");
+        if (error) throw error;
+        USERS_CACHE = Object.fromEntries((data || []).map((u) => [u.id, u]));
+      }
+      return USERS_CACHE;
+    }
     async function loadLicenses() {
       await requireOwner();
-      const { data, error } = await sb.from("landing_licenses").select("*").order("created_at", { ascending: false });
-      if (error) throw error;
-      $("#licBody").innerHTML = data.map((l) => `
+      const [res, users] = await Promise.all([
+        sb.from("landing_licenses").select("*").order("created_at", { ascending: false }),
+        usersMap(),
+      ]);
+      if (res.error) throw res.error;
+      const data = res.data || [];
+      const who = (l) => {
+        const u = l.requested_by && users[l.requested_by];
+        if (!u) return esc(l.notes || l.business_id) || "—";
+        return "<strong>" + esc(u.business_name) + "</strong><br /><span class='muted'>" + esc(u.email) + "</span>";
+      };
+      const pend = data.filter((l) => l.status === "pending");
+      const rest = data.filter((l) => l.status !== "pending");
+      $("#licReqBody").innerHTML = pend.map((l) => `
+        <tr>
+          <td>${who(l)}</td>
+          <td><code>${esc(l.key)}</code></td>
+          <td class="muted">${fmtDate(l.created_at)}</td>
+          <td><div class="row-actions">
+            <button class="btn btn-ghost btn-sm" data-act="accept" data-id="${l.id}" data-k="${esc(l.key)}">Aceptar</button>
+            <button class="btn btn-ghost btn-sm" data-act="reject" data-id="${l.id}" data-k="${esc(l.key)}">Rechazar</button>
+          </div></td>
+        </tr>`).join("") || `<tr><td colspan="4">Sin solicitudes pendientes. 🎉</td></tr>`;
+      $("#licBody").innerHTML = rest.map((l) => `
         <tr>
           <td><code>${esc(l.key)}</code></td>
-          <td class="muted">${esc(l.business_id) || "—"}</td>
-          <td><span class="badge ${l.active ? "ok" : "off"}">${l.active ? "activa" : "revocada"}</span></td>
+          <td>${who(l)}</td>
+          <td><span class="badge ${l.active ? "ok" : "off"}">${l.status === "rejected" ? "rechazada" : (l.active ? "activa" : "revocada")}</span></td>
           <td class="muted">${esc(l.notes) || "—"}</td>
           <td><div class="row-actions">
             <button class="btn btn-ghost btn-sm" data-act="toggle" data-id="${l.id}" data-on="${l.active ? 1 : 0}">${l.active ? "Revocar" : "Reactivar"}</button>
             <button class="btn btn-ghost btn-sm" data-act="biz" data-id="${l.id}">Negocio</button>
             <button class="btn btn-ghost btn-sm" data-act="del" data-id="${l.id}" data-k="${esc(l.key)}">Eliminar</button>
           </div></td>
-        </tr>`).join("") || `<tr><td colspan="5">Sin licencias. Genera la primera arriba.</td></tr>`;
+        </tr>`).join("") || `<tr><td colspan="5">Sin licencias emitidas.</td></tr>`;
     }
     $("#formLic").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -373,6 +409,8 @@
           key: genKey(),
           business_id: String(fd.get("business_id")).trim().slice(0, 120),
           notes: String(fd.get("notes")).trim().slice(0, 200),
+          status: "approved",
+          active: true,
         };
         const { error } = await sb.from("landing_licenses").insert(row);
         if (error) throw error;
@@ -381,7 +419,7 @@
         showMsg("Licencia creada: " + row.key, "ok");
       } catch (err) { showMsg(niceErr(err), "err"); }
     });
-    $("#licBody").addEventListener("click", async (e) => {
+    $("#tab-licenses").addEventListener("click", async (e) => {
       const b = e.target.closest("button[data-act]");
       if (!b) return;
       try {
@@ -389,6 +427,14 @@
         const id = b.dataset.id;
         if (b.dataset.act === "toggle") {
           const { error } = await sb.from("landing_licenses").update({ active: b.dataset.on !== "1" }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "accept") {
+          if (!confirm("Activar la licencia " + b.dataset.k + "?")) return;
+          const { error } = await sb.from("landing_licenses").update({ status: "approved", active: true }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "reject") {
+          if (!confirm("Rechazar la licencia " + b.dataset.k + "?")) return;
+          const { error } = await sb.from("landing_licenses").update({ status: "rejected", active: false }).eq("id", id);
           if (error) throw error;
         } else if (b.dataset.act === "biz") {
           const v = prompt("ID de negocio (lo dará el programa luego):", "");

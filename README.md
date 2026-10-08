@@ -28,7 +28,8 @@ Landing Page/
 | Cuentas | ✅ `cuenta.html` (registro/login, activación por owner) |
 | Panel owner | ✅ `panel.html` (usuarios, versiones con subida de .exe a la web, licencias; puerta owner, customers van a novedades) |
 | Descargas | ✅ `descargas.html` + `versiones/version.json` (solo cuentas activas) |
-| Novedades | ✅ `novedades.html` (historial para customers activos) |
+| Novedades | ✅ `novedades.html` (historial para customers activos + Mi licencia con solicitud) + tira en el hero del index |
+| Licencias | ✅ por solicitud: el customer pide, el owner acepta/rechaza viendo correo y negocio |
 | Video demo | ⬜ pendiente (`captures/demo.mp4`) |
 | Captura de Ventas/POS para el hero | ⬜ pendiente (el hero usa el mock hasta entonces) |
 | Contacto | ✅ WhatsApp + correo reales |

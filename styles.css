@@ -370,6 +370,7 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   .mock-cards { grid-template-columns: 1fr; }
   .mock-table { font-size: 12px; }
   .mock-float { display: none; }
+  .news-strip { flex-direction: column; align-items: flex-start; }
   .demo-creds { display: block; line-height: 2; }
   .foot-grid { grid-template-columns: 1fr; }
 }
@@ -381,6 +382,12 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   .faq-q { font-size: 14.5px; padding: 16px 18px; }
 }
 
+/* Tira de novedades en el hero */
+.news-strip { display: flex; align-items: center; gap: 16px; background: #fff;
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 24px;
+  box-shadow: var(--shadow-sm); margin-top: 40px; }
+.news-strip p { margin: 0; flex: 1; font-size: 14.5px; color: var(--ink-700); }
+.news-strip .btn { flex-shrink: 0; }
 /* ---------- Cuenta / panel / descargas ---------- */
 .page-narrow { max-width: 760px; }
 .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
