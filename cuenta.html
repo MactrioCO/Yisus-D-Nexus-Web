@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi cuenta — Yisus D Nexus</title>
+  <meta name="description" content="Accede a tu cuenta de Yisus D Nexus: descargas, versiones y panel del negocio." />
+  <meta name="theme-color" content="#0b1526" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="stylesheet" href="styles.css?v=2" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav scrolled" style="position:sticky">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html" aria-label="Yisus D Nexus — inicio">
+        <img src="assets/logo.png" alt="Logo de Yisus D Nexus" width="40" height="40" />
+        <span><b>Yisus D Nexus</b><small>POS · OFFLINE-FIRST</small></span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="descargas.html">Descargas</a></li>
+          <li><a href="cuenta.html" class="active">Cuenta</a></li>
+        </ul>
+      </nav>
+      <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="section" id="contenido" style="padding-top:60px">
+    <div class="wrap page-narrow">
+      <span class="eyebrow">CUENTA</span>
+      <h2 class="sec-title">Tu acceso al sistema.</h2>
+      <p class="sec-sub">Una cuenta por negocio. Las cuentas nuevas quedan <strong>pendientes de activación</strong> hasta que el administrador las aprueba.</p>
+
+      <div id="boxLogged" class="form-card" hidden>
+        <h3 id="helloTitle">Hola 👋</h3>
+        <p class="muted" id="helloSub"></p>
+        <div class="demo-cta" style="justify-content:flex-start">
+          <a class="btn btn-primary btn-sm" href="descargas.html">Ir a descargas</a>
+          <a class="btn btn-ghost btn-sm" id="linkPanel" href="panel.html" hidden>Panel del owner</a>
+          <button class="btn btn-ghost btn-sm" id="btnOut" type="button">Cerrar sesión</button>
+        </div>
+        <p class="muted" id="pendingNote" style="margin-top:14px" hidden>⏳ Tu cuenta está <strong>pendiente de activación</strong>. Te avisaremos por WhatsApp/correo cuando quede lista.</p>
+      </div>
+
+      <div id="boxAuth">
+        <div class="tabs" role="tablist">
+          <button class="tab active" id="tabLogin" role="tab" aria-selected="true">Entrar</button>
+          <button class="tab" id="tabReg" role="tab" aria-selected="false">Crear cuenta</button>
+        </div>
+
+        <form class="form-card" id="formLogin">
+          <label class="field">Correo
+            <input type="email" name="email" required autocomplete="email" placeholder="tucorreo@ejemplo.com" />
+          </label>
+          <label class="field">Contraseña
+            <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+          </label>
+          <button class="btn btn-primary" type="submit" id="btnLogin">Entrar</button>
+        </form>
+
+        <form class="form-card" id="formReg" hidden>
+          <label class="field">Nombre del negocio *
+            <input type="text" name="business" required minlength="2" maxlength="120" autocomplete="organization" placeholder="Mi Tienda" />
+          </label>
+          <label class="field">Correo *
+            <input type="email" name="email" required autocomplete="email" placeholder="tucorreo@ejemplo.com" />
+          </label>
+          <label class="field">Contraseña * (mínimo 8 caracteres)
+            <input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="••••••••" />
+          </label>
+          <button class="btn btn-primary" type="submit" id="btnReg">Crear cuenta</button>
+          <p class="muted">Al registrarte aceptas los <a href="legal.html#terminos">términos</a> y la <a href="legal.html#privacidad">política de privacidad</a>.</p>
+        </form>
+
+        <div class="alert" id="msg" hidden></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-base">
+        <span>© <span id="year">2026</span> Yisus D Nexus · Yisus D Dev.</span>
+        <span><a href="index.html" style="color:#94a3b8">Volver al inicio</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/sb-config.js?v=2"></script>
+  <script type="module">
+    import { sb, myProfile, ensureProfile, signOut, niceErr } from "./js/sb.js?v=2";
+
+    const $ = (s) => document.querySelector(s);
+    $("#year").textContent = new Date().getFullYear();
+    const burger = $("#burger");
+    burger.addEventListener("click", () => {
+      const open = document.body.classList.toggle("menu-open");
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    const tabLogin = $("#tabLogin"), tabReg = $("#tabReg");
+    const formLogin = $("#formLogin"), formReg = $("#formReg");
+    function showTab(which) {
+      const login = which === "login";
+      tabLogin.classList.toggle("active", login);
+      tabReg.classList.toggle("active", !login);
+      tabLogin.setAttribute("aria-selected", login);
+      tabReg.setAttribute("aria-selected", !login);
+      formLogin.hidden = !login;
+      formReg.hidden = login;
+      hideMsg();
+    }
+    tabLogin.addEventListener("click", () => showTab("login"));
+    tabReg.addEventListener("click", () => showTab("reg"));
+
+    function showMsg(text, kind) {
+      const m = $("#msg");
+      m.hidden = false;
+      m.className = "alert " + (kind || "info");
+      m.textContent = text;
+    }
+    function hideMsg() { $("#msg").hidden = true; }
+
+    async function refresh() {
+      const { user, profile } = await myProfile();
+      $("#boxLogged").hidden = !user;
+      $("#boxAuth").hidden = !!user;
+      if (!user) return;
+      $("#helloTitle").textContent = "Hola, " + ((profile && profile.business_name) || user.email) + " 👋";
+      $("#helloSub").textContent = user.email;
+      const ok = profile && profile.active;
+      $("#pendingNote").hidden = !!ok;
+      $("#linkPanel").hidden = !(ok && profile.role === "owner");
+    }
+
+    formLogin.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideMsg();
+      $("#btnLogin").disabled = true;
+      try {
+        const fd = new FormData(formLogin);
+        const { error } = await sb.auth.signInWithPassword({
+          email: String(fd.get("email")).trim(),
+          password: String(fd.get("password")),
+        });
+        if (error) throw error;
+        await ensureProfile("");
+        await refresh();
+        showMsg("Sesión iniciada.", "ok");
+      } catch (err) { showMsg(niceErr(err), "err"); }
+      $("#btnLogin").disabled = false;
+    });
+
+    formReg.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideMsg();
+      $("#btnReg").disabled = true;
+      try {
+        const fd = new FormData(formReg);
+        const business = String(fd.get("business")).trim();
+        const email = String(fd.get("email")).trim();
+        const { data, error } = await sb.auth.signUp({
+          email,
+          password: String(fd.get("password")),
+          options: { data: { business_name: business } },
+        });
+        if (error) throw error;
+        if (data.session) {
+          await ensureProfile(business);
+          await refresh();
+          showMsg("Cuenta creada. Quedó pendiente de activación.", "ok");
+        } else {
+          showMsg("Cuenta creada. Revisa tu correo para confirmar y luego inicia sesión.", "ok");
+          showTab("login");
+        }
+      } catch (err) { showMsg(niceErr(err), "err"); }
+      $("#btnReg").disabled = false;
+    });
+
+    $("#btnOut").addEventListener("click", async () => {
+      await signOut();
+      await refresh();
+      showTab("login");
+    });
+
+    refresh().catch((e) => showMsg(niceErr(e), "err"));
+  </script>
+</body>
+</html>

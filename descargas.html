@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descargas — Yisus D Nexus</title>
+  <meta name="description" content="Descarga la última versión de Yisus D Nexus para Windows, con verificación SHA-256." />
+  <meta name="theme-color" content="#0b1526" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="stylesheet" href="styles.css?v=2" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav scrolled" style="position:sticky">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html" aria-label="Yisus D Nexus — inicio">
+        <img src="assets/logo.png" alt="Logo de Yisus D Nexus" width="40" height="40" />
+        <span><b>Yisus D Nexus</b><small>POS · OFFLINE-FIRST</small></span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="descargas.html" class="active">Descargas</a></li>
+          <li><a href="cuenta.html">Cuenta</a></li>
+        </ul>
+      </nav>
+      <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="section" id="contenido" style="padding-top:60px">
+    <div class="wrap page-narrow">
+      <span class="eyebrow">DESCARGAS</span>
+      <h2 class="sec-title">Última versión disponible.</h2>
+      <p class="sec-sub">Instalador oficial para Windows (64 bits). El programa también avisa solo cuando hay una versión nueva.</p>
+
+      <div class="alert info" id="loading">Buscando la última versión…</div>
+      <div class="alert" id="empty" hidden>
+        Aún no hay versiones publicadas. ¿Solo quieres probar?
+        <a href="index.html#demo">Descarga la demo</a>
+      </div>
+
+      <article class="form-card" id="relCard" hidden>
+        <span class="pill"><span class="dot"></span><span id="relVer">v0.0.0</span>&nbsp;· Windows 64 bits</span>
+        <h3>Qué cambió</h3>
+        <p id="relChange" style="white-space:pre-wrap"></p>
+        <p class="muted" id="relDate"></p>
+        <div class="demo-cta" style="justify-content:flex-start">
+          <a class="btn btn-primary" id="relBtn" href="#">⬇ Descargar instalador</a>
+          <a class="btn btn-ghost btn-sm" href="versiones/version.json">Ver version.json</a>
+        </div>
+        <details style="margin-top:16px">
+          <summary class="muted" style="cursor:pointer">Verificar integridad (SHA-256)</summary>
+          <pre class="code" id="relSha" style="margin-top:10px"></pre>
+          <p class="muted">En tu PC ejecuta:<br /><code>certutil -hashfile instalador.exe SHA256</code><br />y compara con el valor de arriba.</p>
+        </details>
+      </article>
+
+      <div class="form-card">
+        <h3 style="margin-top:0">¿Solo quieres probar?</h3>
+        <p class="muted">La demo trae datos de ejemplo y no toca tu información. Entra con el usuario <code>demo</code> y la contraseña <code>Demo1234</code>.</p>
+        <a class="btn btn-ghost btn-sm" href="index.html#demo">Ir a la demo</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-base">
+        <span>© <span id="year">2026</span> Yisus D Nexus · Yisus D Dev.</span>
+        <span><a href="index.html" style="color:#94a3b8">Volver al inicio</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/sb-config.js?v=2"></script>
+  <script type="module">
+    import { sb, niceErr } from "./js/sb.js?v=2";
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const burger = document.getElementById("burger");
+    burger.addEventListener("click", () => {
+      const open = document.body.classList.toggle("menu-open");
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    (async () => {
+      try {
+        const { data, error } = await sb
+          .from("landing_releases")
+          .select("version,url,sha256,changelog,created_at")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        document.getElementById("loading").hidden = true;
+        if (error) throw error;
+        if (!data) { document.getElementById("empty").hidden = false; return; }
+        document.getElementById("relCard").hidden = false;
+        document.getElementById("relVer").textContent = "v" + data.version;
+        document.getElementById("relChange").textContent = data.changelog;
+        document.getElementById("relDate").textContent =
+          "Publicada el " + new Date(data.created_at).toLocaleString("es-CO", { dateStyle: "long" });
+        document.getElementById("relBtn").href = data.url;
+        document.getElementById("relSha").textContent = data.sha256;
+      } catch (e) {
+        const l = document.getElementById("loading");
+        l.className = "alert err";
+        l.textContent = "No se pudo cargar: " + niceErr(e);
+      }
+    })();
+  </script>
+</body>
+</html>

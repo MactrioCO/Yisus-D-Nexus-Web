@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel del owner — Yisus D Nexus</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0b1526" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="stylesheet" href="styles.css?v=2" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav scrolled" style="position:sticky">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html" aria-label="Yisus D Nexus — inicio">
+        <img src="assets/logo.png" alt="Logo de Yisus D Nexus" width="40" height="40" />
+        <span><b>Yisus D Nexus</b><small>POS · OFFLINE-FIRST</small></span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="descargas.html">Descargas</a></li>
+          <li><a href="cuenta.html">Cuenta</a></li>
+          <li><a href="panel.html" class="active">Panel</a></li>
+        </ul>
+      </nav>
+      <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="section" id="contenido" style="padding-top:60px">
+    <div class="wrap">
+      <span class="eyebrow">ADMINISTRACIÓN</span>
+      <h2 class="sec-title">Panel del owner.</h2>
+      <p class="sec-sub" id="panelSub">Verificando permisos…</p>
+
+      <div class="alert err" id="denied" hidden>
+        ⛔ Acceso denegado: esta página es solo para el owner con cuenta activa.
+        <a href="cuenta.html">Ir a mi cuenta</a>
+      </div>
+
+      <div id="panelBody" hidden>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="users" role="tab">Usuarios</button>
+          <button class="tab" data-tab="releases" role="tab">Versiones</button>
+          <button class="tab" data-tab="licenses" role="tab">Licencias</button>
+          <span style="flex:1"></span>
+          <button class="btn btn-ghost btn-sm" id="btnOut" type="button">Cerrar sesión</button>
+        </div>
+        <div class="alert" id="msg" hidden></div>
+
+        <!-- USUARIOS -->
+        <section id="tab-users">
+          <div class="table-wrap"><table class="admin">
+            <thead><tr><th>Negocio / correo</th><th>Rol</th><th>Estado</th><th>Registro</th><th>Acciones</th></tr></thead>
+            <tbody id="usersBody"><tr><td colspan="5">Cargando…</td></tr></tbody>
+          </table></div>
+        </section>
+
+        <!-- VERSIONES -->
+        <section id="tab-releases" hidden>
+          <form class="form-card" id="formRel">
+            <h3 style="margin-top:0">Publicar versión</h3>
+            <div class="grid2">
+              <label class="field">Versión (semver) *
+                <input type="text" name="version" required placeholder="0.2.1" pattern="[0-9]+\.[0-9]+\.[0-9]+" />
+              </label>
+              <label class="field">SHA-256 (64 minúsculas) *
+                <input type="text" name="sha256" required placeholder="certutil -hashfile instalador.exe SHA256" pattern="[0-9a-f]{64}" style="font-family:monospace" />
+              </label>
+            </div>
+            <label class="field">URL directa del .exe *
+              <input type="url" name="url" required placeholder="https://github.com/…/releases/download/…/Setup.exe" />
+            </label>
+            <label class="field">Qué cambió (máx. 300, lo ve el usuario) *
+              <textarea name="changelog" required maxlength="300" rows="2" placeholder="Correcciones y mejoras…"></textarea>
+            </label>
+            <label class="check"><input type="checkbox" name="published" checked /> Publicar de una vez (retira la anterior)</label>
+            <button class="btn btn-primary btn-sm" type="submit" id="btnRel">Guardar versión</button>
+          </form>
+          <div class="table-wrap"><table class="admin">
+            <thead><tr><th>Versión</th><th>Estado</th><th>Changelog</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="relBody"><tr><td colspan="5">Cargando…</td></tr></tbody>
+          </table></div>
+          <div class="form-card">
+            <h3 style="margin-top:0">version.json para el sitio</h3>
+            <p class="muted">Genera el archivo con el formato exacto que lee el actualizador del POS. Descárgalo y súbelo al repo web en <code>versiones/version.json</code>.</p>
+            <pre class="code" id="vjPreview">—</pre>
+            <button class="btn btn-ghost btn-sm" id="btnVj" type="button">⬇ Descargar version.json</button>
+          </div>
+        </section>
+
+        <!-- LICENCIAS -->
+        <section id="tab-licenses" hidden>
+          <form class="form-card" id="formLic">
+            <h3 style="margin-top:0">Nueva licencia</h3>
+            <div class="grid2">
+              <label class="field">Notas (para quién es)
+                <input type="text" name="notes" maxlength="200" placeholder="Tienda La Esquina" />
+              </label>
+              <label class="field">ID de negocio (lo dará el programa luego, opcional)
+                <input type="text" name="business_id" maxlength="120" placeholder="" />
+              </label>
+            </div>
+            <button class="btn btn-primary btn-sm" type="submit" id="btnLic">Generar clave</button>
+          </form>
+          <div class="table-wrap"><table class="admin">
+            <thead><tr><th>Clave</th><th>Negocio</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr></thead>
+            <tbody id="licBody"><tr><td colspan="5">Cargando…</td></tr></tbody>
+          </table></div>
+          <div class="form-card">
+            <h3 style="margin-top:0">Probar validación (lo que usará el POS)</h3>
+            <div class="grid2">
+              <label class="field">Clave a validar
+                <input type="text" id="licTest" placeholder="YDNX-XXXX-XXXX" style="font-family:monospace" />
+              </label>
+              <div><button class="btn btn-ghost btn-sm" id="btnLicTest" type="button" style="margin-top:26px">Validar</button></div>
+            </div>
+            <p id="licTestOut" class="muted">—</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-base">
+        <span>© <span id="year">2026</span> Yisus D Nexus · Yisus D Dev.</span>
+        <span><a href="index.html" style="color:#94a3b8">Volver al inicio</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/sb-config.js?v=2"></script>
+  <script type="module">
+    import { sb, requireOwner, signOut, niceErr } from "./js/sb.js?v=2";
+
+    const $ = (s) => document.querySelector(s);
+    $("#year").textContent = new Date().getFullYear();
+    const burger = $("#burger");
+    burger.addEventListener("click", () => {
+      const open = document.body.classList.toggle("menu-open");
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    let ME = null;
+    function showMsg(text, kind) {
+      const m = $("#msg");
+      m.hidden = false;
+      m.className = "alert " + (kind || "info");
+      m.textContent = text;
+      m.scrollIntoView({ block: "nearest" });
+    }
+    function hideMsg() { $("#msg").hidden = true; }
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const fmtDate = (iso) => new Date(iso).toLocaleString("es-CO", { dateStyle: "medium", timeStyle: "short" });
+
+    document.querySelectorAll(".tab[data-tab]").forEach((t) => {
+      t.addEventListener("click", () => {
+        document.querySelectorAll(".tab[data-tab]").forEach((x) => x.classList.remove("active"));
+        t.classList.add("active");
+        ["users", "releases", "licenses"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
+        hideMsg();
+      });
+    });
+
+    /* ---------- Usuarios ---------- */
+    async function loadUsers() {
+      await requireOwner();
+      const { data, error } = await sb.from("landing_users").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      $("#usersBody").innerHTML = data.map((u) => `
+        <tr>
+          <td><strong>${esc(u.business_name)}</strong><br /><span class="muted">${esc(u.email)}</span></td>
+          <td><span class="badge ${u.role === "owner" ? "owner" : ""}">${esc(u.role)}</span></td>
+          <td><span class="badge ${u.active ? "ok" : "off"}">${u.active ? "activa" : "pendiente"}</span></td>
+          <td class="muted">${fmtDate(u.created_at)}</td>
+          <td><div class="row-actions">
+            <button class="btn btn-ghost btn-sm" data-act="toggle" data-id="${u.id}" data-on="${u.active ? 1 : 0}">${u.active ? "Desactivar" : "Activar"}</button>
+            <button class="btn btn-ghost btn-sm" data-act="name" data-id="${u.id}">Nombre</button>
+            <button class="btn btn-ghost btn-sm" data-act="role" data-id="${u.id}" data-role="${u.role}">${u.role === "owner" ? "→ customer" : "→ owner"}</button>
+          </div></td>
+        </tr>`).join("") || `<tr><td colspan="5">Sin usuarios.</td></tr>`;
+    }
+    $("#usersBody").addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-act]");
+      if (!b) return;
+      try {
+        const gate = await requireOwner();
+        const id = b.dataset.id;
+        if (b.dataset.act === "toggle") {
+          const to = b.dataset.on === "1" ? false : true;
+          if (id === gate.profile.id && !to) {
+            if (!confirm("Te vas a DESACTIVAR a ti mismo y perderás el panel. ¿Seguro?")) return;
+          }
+          const { error } = await sb.from("landing_users").update({ active: to }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "name") {
+          const name = prompt("Nombre del negocio:", "");
+          if (name === null) return;
+          if (name.trim().length < 2) { showMsg("Nombre muy corto.", "err"); return; }
+          const { error } = await sb.from("landing_users").update({ business_name: name.trim().slice(0, 120) }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "role") {
+          const to = b.dataset.role === "owner" ? "customer" : "owner";
+          if (id === gate.profile.id && to !== "owner") {
+            if (!confirm("Te vas a quitar el rol owner. ¿Seguro?")) return;
+          }
+          const { error } = await sb.from("landing_users").update({ role: to }).eq("id", id);
+          if (error) throw error;
+        }
+        await loadUsers();
+        showMsg("Usuario actualizado.", "ok");
+      } catch (err) { showMsg(niceErr(err), "err"); }
+    });
+
+    /* ---------- Versiones ---------- */
+    function vjOf(r) {
+      return JSON.stringify({ version: r.version, url: r.url, sha256: r.sha256, changelog: r.changelog }, null, 2);
+    }
+    async function loadReleases() {
+      await requireOwner();
+      const { data, error } = await sb.from("landing_releases").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      $("#relBody").innerHTML = data.map((r) => `
+        <tr>
+          <td><strong class="mono">v${esc(r.version)}</strong></td>
+          <td><span class="badge ${r.published ? "ok" : "off"}">${r.published ? "publicada" : "borrador"}</span></td>
+          <td class="muted">${esc(r.changelog)}</td>
+          <td class="muted">${fmtDate(r.created_at)}</td>
+          <td><div class="row-actions">
+            ${r.published
+              ? `<button class="btn btn-ghost btn-sm" data-act="unpub" data-id="${r.id}">Retirar</button>`
+              : `<button class="btn btn-ghost btn-sm" data-act="pub" data-id="${r.id}">Publicar</button>`}
+            <button class="btn btn-ghost btn-sm" data-act="del" data-id="${r.id}" data-v="${esc(r.version)}" data-p="${r.published ? 1 : 0}">Eliminar</button>
+          </div></td>
+        </tr>`).join("") || `<tr><td colspan="5">Sin versiones. Publica la primera arriba.</td></tr>`;
+      const pub = data.find((r) => r.published);
+      $("#vjPreview").textContent = pub ? vjOf(pub) : "— (no hay versión publicada) —";
+    }
+    $("#formRel").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideMsg();
+      try {
+        await requireOwner();
+        const fd = new FormData($("#formRel"));
+        const row = {
+          version: String(fd.get("version")).trim(),
+          url: String(fd.get("url")).trim(),
+          sha256: String(fd.get("sha256")).trim().toLowerCase(),
+          changelog: String(fd.get("changelog")).trim(),
+          published: !!fd.get("published"),
+        };
+        const { data, error } = await sb.from("landing_releases").insert(row).select().single();
+        if (error) throw error;
+        if (row.published) {
+          await sb.from("landing_releases").update({ published: false }).neq("id", data.id);
+        }
+        $("#formRel").reset();
+        await loadReleases();
+        showMsg("Versión " + row.version + " guardada.", "ok");
+      } catch (err) { showMsg(niceErr(err), "err"); }
+    });
+    $("#relBody").addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-act]");
+      if (!b) return;
+      try {
+        await requireOwner();
+        const id = b.dataset.id;
+        if (b.dataset.act === "pub") {
+          const { error } = await sb.from("landing_releases").update({ published: true }).eq("id", id);
+          if (error) throw error;
+          await sb.from("landing_releases").update({ published: false }).neq("id", id);
+        } else if (b.dataset.act === "unpub") {
+          const { error } = await sb.from("landing_releases").update({ published: false }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "del") {
+          if (b.dataset.p === "1" && !confirm("Vas a eliminar la versión PUBLICADA v" + b.dataset.v + ". El POS dejará de ver actualizaciones. ¿Seguro?")) return;
+          if (b.dataset.p !== "1" && !confirm("Eliminar v" + b.dataset.v + "?")) return;
+          const { error } = await sb.from("landing_releases").delete().eq("id", id);
+          if (error) throw error;
+        }
+        await loadReleases();
+        showMsg("Versiones actualizadas. Recuerda regenerar versiones/version.json si cambió la publicada.", "ok");
+      } catch (err) { showMsg(niceErr(err), "err"); }
+    });
+    $("#btnVj").addEventListener("click", () => {
+      const txt = $("#vjPreview").textContent;
+      if (txt.startsWith("—")) { showMsg("No hay versión publicada para generar.", "err"); return; }
+      const blob = new Blob([txt + "\n"], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "version.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showMsg("Súbelo al repo web en versiones/version.json y haz push.", "ok");
+    });
+
+    /* ---------- Licencias ---------- */
+    function genKey() {
+      const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      const g = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n))).map((x) => A[x % A.length]).join("");
+      return "YDNX-" + g(4) + "-" + g(4);
+    }
+    async function loadLicenses() {
+      await requireOwner();
+      const { data, error } = await sb.from("landing_licenses").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      $("#licBody").innerHTML = data.map((l) => `
+        <tr>
+          <td><code>${esc(l.key)}</code></td>
+          <td class="muted">${esc(l.business_id) || "—"}</td>
+          <td><span class="badge ${l.active ? "ok" : "off"}">${l.active ? "activa" : "revocada"}</span></td>
+          <td class="muted">${esc(l.notes) || "—"}</td>
+          <td><div class="row-actions">
+            <button class="btn btn-ghost btn-sm" data-act="toggle" data-id="${l.id}" data-on="${l.active ? 1 : 0}">${l.active ? "Revocar" : "Reactivar"}</button>
+            <button class="btn btn-ghost btn-sm" data-act="biz" data-id="${l.id}">Negocio</button>
+            <button class="btn btn-ghost btn-sm" data-act="del" data-id="${l.id}" data-k="${esc(l.key)}">Eliminar</button>
+          </div></td>
+        </tr>`).join("") || `<tr><td colspan="5">Sin licencias. Genera la primera arriba.</td></tr>`;
+    }
+    $("#formLic").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideMsg();
+      try {
+        await requireOwner();
+        const fd = new FormData($("#formLic"));
+        const row = {
+          key: genKey(),
+          business_id: String(fd.get("business_id")).trim().slice(0, 120),
+          notes: String(fd.get("notes")).trim().slice(0, 200),
+        };
+        const { error } = await sb.from("landing_licenses").insert(row);
+        if (error) throw error;
+        $("#formLic").reset();
+        await loadLicenses();
+        showMsg("Licencia creada: " + row.key, "ok");
+      } catch (err) { showMsg(niceErr(err), "err"); }
+    });
+    $("#licBody").addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-act]");
+      if (!b) return;
+      try {
+        await requireOwner();
+        const id = b.dataset.id;
+        if (b.dataset.act === "toggle") {
+          const { error } = await sb.from("landing_licenses").update({ active: b.dataset.on !== "1" }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "biz") {
+          const v = prompt("ID de negocio (lo dará el programa luego):", "");
+          if (v === null) return;
+          const { error } = await sb.from("landing_licenses").update({ business_id: v.trim().slice(0, 120) }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "del") {
+          if (!confirm("Eliminar la licencia " + b.dataset.k + "?")) return;
+          const { error } = await sb.from("landing_licenses").delete().eq("id", id);
+          if (error) throw error;
+        }
+        await loadLicenses();
+        showMsg("Licencias actualizadas.", "ok");
+      } catch (err) { showMsg(niceErr(err), "err"); }
+    });
+    $("#btnLicTest").addEventListener("click", async () => {
+      const k = $("#licTest").value.trim();
+      $("#licTestOut").textContent = "consultando…";
+      const { data, error } = await sb.rpc("validate_license", { p_key: k });
+      if (error) { $("#licTestOut").textContent = "Error: " + niceErr(error); return; }
+      $("#licTestOut").innerHTML = data === true
+        ? "✅ Clave <strong>VÁLIDA y activa</strong>."
+        : "❌ Clave <strong>inválida o revocada</strong>.";
+    });
+
+    /* ---------- Arranque con puerta ---------- */
+    $("#btnOut").addEventListener("click", async () => {
+      await signOut();
+      location.href = "cuenta.html";
+    });
+    (async () => {
+      try {
+        ME = await requireOwner();
+        $("#panelSub").textContent = "Sesión de " + ME.profile.business_name + " (" + ME.user.email + ").";
+        $("#panelBody").hidden = false;
+        await Promise.all([loadUsers(), loadReleases(), loadLicenses()]);
+      } catch (err) {
+        $("#panelSub").textContent = "Sin acceso.";
+        $("#denied").hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>
