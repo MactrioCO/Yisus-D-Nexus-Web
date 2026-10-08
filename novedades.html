@@ -110,7 +110,8 @@
               notes: (profile.business_name || "") + " (" + user.email + ")",
             });
             if (insErr) {
-              box.innerHTML = `<div class="alert err">No se pudo registrar: ${esc(insErr.message)}</div>`;
+              if (/duplicate|unique/i.test(insErr.message)) { loadLicense(user, profile); return; }
+              box.innerHTML = `<div class="alert err">No se pudo registrar: ${esc(niceErr(insErr))}</div>`;
               return;
             }
             loadLicense(user, profile);

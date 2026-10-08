@@ -71,8 +71,13 @@ privadas rebotan al inicio si no hay permiso:
 
 ## Licencias por solicitud (customer pide, owner aprueba)
 
-- El customer pide desde `novedades.html` → **Mi licencia** (una sola
-  solicitud pendiente por cuenta, índice parcial `uq_license_pending`).
+- Cada cuenta nueva genera sola su solicitud en pendiente (trigger;
+  también hay backfill una sola vez). El formato de clave se exige
+  a nivel de tabla (`YDNX-XXXX-XXXX`).
+- El customer la ve en `novedades.html` → **Mi licencia** (pendiente,
+  activa con clave, o rechazada con opción de pedir de nuevo).
+- El owner la ve en `panel.html` → **Solicitudes pendientes** con
+  negocio/correo y la **Acepta** (activa) o **Rechaza**.
 - La fila nace `pending` + inactiva (no valida). El owner la ve en
   `panel.html` → **Solicitudes pendientes** con negocio/correo y la
   **Acepta** (activa) o **Rechaza**. También puede emitir directas.
