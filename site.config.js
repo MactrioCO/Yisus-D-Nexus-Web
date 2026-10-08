@@ -23,7 +23,7 @@ window.NEXUS_SITE = {
    * Demo ACTIVA vía GitHub Release. Si publicas una versión
    * nueva, sube el .exe al Release y cambia la URL aquí. */
   demo: {
-    file: "https://github.com/MactrioCO/Yisus-D-Nexus/releases/download/v0.2.0-demo/NexusDemo_Setup_0.2.0_win64.exe",
+    file: "https://github.com/MactrioCO/Yisus-D-Nexus-Web/releases/download/DEMO/NexusDemo_Setup_0.2.0_win64.exe",
     available: true,
   },
 

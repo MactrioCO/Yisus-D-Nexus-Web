@@ -22,7 +22,7 @@ Landing Page/
 
 | Qué | Estado |
 |-----|--------|
-| Instalador demo | ✅ activo vía GitHub Release `v0.2.0-demo` (usuario `demo` / clave `Demo1234`) |
+| Instalador demo | ✅ activo vía Release público `DEMO` en `Yisus-D-Nexus-Web` (usuario `demo` / clave `Demo1234`, SHA-256 verificado) |
 | Capturas | ✅ reales: login, dashboard, productos, clientes |
 | Backend nube | ✅ Supabase Auth + 3 tablas `landing_*` con RLS (ver `SUPABASE_BACKEND.md`) |
 | Cuentas | ✅ `cuenta.html` (registro/login, activación por owner) |
