@@ -393,5 +393,23 @@
 
   <script src="site.config.js?v=2"></script>
   <script src="app.js?v=2"></script>
+  <script>
+    /* Aviso al rebotar desde una página privada (?denied=...). */
+    (function () {
+      var r = new URLSearchParams(location.search).get("denied");
+      if (!r) return;
+      var msgs = {
+        login: "🔒 Inicia sesión para entrar ahí.",
+        pending: "⏳ Tu cuenta está pendiente de activación.",
+        owner: "⛔ Acceso denegado: solo el owner.",
+      };
+      var t = document.getElementById("toast");
+      if (!t) return;
+      t.textContent = msgs[r] || msgs.owner;
+      t.classList.add("show");
+      setTimeout(function () { t.classList.remove("show"); }, 4200);
+      history.replaceState(null, "", location.pathname);
+    })();
+  </script>
 </body>
 </html>

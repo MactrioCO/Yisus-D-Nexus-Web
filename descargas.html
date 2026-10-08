@@ -37,15 +37,6 @@
       <p class="sec-sub">El instalador oficial es exclusivo para clientes con cuenta activa. El programa también avisa solo cuando hay una versión nueva.</p>
 
       <div class="alert info" id="loading">Verificando tu cuenta…</div>
-      <div class="alert" id="gateLogin" hidden>
-        🔒 Esta sección es solo para <strong>clientes con cuenta activa</strong>. Si compraste el programa, entra con tu cuenta para descargar el instalador oficial.
-        <div class="demo-cta" style="justify-content:flex-start;margin-top:12px">
-          <a class="btn btn-primary btn-sm" href="cuenta.html">Iniciar sesión</a>
-        </div>
-      </div>
-      <div class="alert" id="gatePending" hidden>
-        ⏳ Tu cuenta está <strong>pendiente de activación</strong>. Cuando el administrador la apruebe verás aquí el instalador oficial.
-      </div>
       <div class="alert" id="empty" hidden>
         Aún no hay versiones publicadas. ¿Solo quieres probar?
         <a href="index.html#demo">Descarga la demo</a>
@@ -86,7 +77,7 @@
 
   <script src="js/sb-config.js?v=2"></script>
   <script type="module">
-    import { sb, myProfile, niceErr } from "./js/sb.js?v=2";
+    import { sb, myProfile, deny, niceErr } from "./js/sb.js?v=2";
 
     document.getElementById("year").textContent = new Date().getFullYear();
     const burger = document.getElementById("burger");
@@ -98,11 +89,11 @@
     (async () => {
       const loading = document.getElementById("loading");
       try {
-        // Puerta: solo clientes con cuenta activa ven el instalador.
+        // Puerta: sin sesión o sin activar, de vuelta al inicio.
         const { user, profile } = await myProfile();
+        if (!user) { deny("login"); return; }
+        if (!profile || !profile.active) { deny("pending"); return; }
         loading.hidden = true;
-        if (!user) { document.getElementById("gateLogin").hidden = false; return; }
-        if (!profile || !profile.active) { document.getElementById("gatePending").hidden = false; return; }
         const { data, error } = await sb
           .from("landing_releases")
           .select("version,url,sha256,changelog,created_at")

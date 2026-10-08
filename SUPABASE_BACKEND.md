@@ -54,6 +54,20 @@ ni auto-activarse editando su fila).
 5. El POS (versión instalada < publicada) avisará solo; verifica el
    SHA antes de instalar y nunca hace downgrade.
 
+## Puertas del front (defensa en profundidad)
+
+El blindaje real son Auth + RLS (probado). Encima, las páginas
+privadas rebotan al inicio si no hay permiso:
+
+- `panel.html` → `requireOwner()` en cada carga y antes de cada
+  escritura; si falla → `index.html?denied=owner`.
+- `descargas.html` → sin sesión → `?denied=login`; pendiente →
+  `?denied=pending`. Solo cuentas activas ven el instalador.
+- `index.html` muestra el motivo en un toast y limpia la URL.
+- `cuenta.html` es la puerta pública (no se protege).
+- Si el CDN de Supabase falla, los módulos no corren y el contenido
+  sensible queda oculto (denegado por defecto).
+
 ## Probar la validación de licencias
 
 `panel.html` → Licencias → genera una clave → usa **Probar validación**.

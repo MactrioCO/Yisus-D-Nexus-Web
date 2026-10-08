@@ -137,7 +137,7 @@
 
   <script src="js/sb-config.js?v=2"></script>
   <script type="module">
-    import { sb, requireOwner, signOut, niceErr } from "./js/sb.js?v=2";
+    import { sb, requireOwner, deny, signOut, niceErr } from "./js/sb.js?v=2";
 
     const $ = (s) => document.querySelector(s);
     $("#year").textContent = new Date().getFullYear();
@@ -386,8 +386,7 @@
         $("#panelBody").hidden = false;
         await Promise.all([loadUsers(), loadReleases(), loadLicenses()]);
       } catch (err) {
-        $("#panelSub").textContent = "Sin acceso.";
-        $("#denied").hidden = false;
+        deny("owner");
       }
     })();
   </script>

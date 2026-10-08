@@ -63,6 +63,13 @@ export async function signOut() {
   await sb.auth.signOut();
 }
 
+/* Rebota al inicio cuando no hay permiso (puerta de páginas privadas).
+   Por defecto todo es denegado: solo el código que pasa requireOwner/
+   la sesión muestra contenido. */
+export function deny(reason) {
+  location.replace("index.html?denied=" + encodeURIComponent(reason || "owner"));
+}
+
 export function niceErr(e) {
   const m = String((e && e.message) || e || "");
   if (/Invalid login credentials/i.test(m)) return "Correo o contraseña incorrectos.";
