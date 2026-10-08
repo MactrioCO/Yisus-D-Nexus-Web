@@ -41,7 +41,6 @@
         <p class="muted" id="helloSub"></p>
         <div class="demo-cta" style="justify-content:flex-start">
           <a class="btn btn-primary btn-sm" href="descargas.html">Ir a descargas</a>
-          <a class="btn btn-ghost btn-sm" id="linkPanel" href="panel.html" hidden>Panel del owner</a>
           <button class="btn btn-ghost btn-sm" id="btnOut" type="button">Cerrar sesión</button>
         </div>
         <p class="muted" id="pendingNote" style="margin-top:14px" hidden>⏳ Tu cuenta está <strong>pendiente de activación</strong>. Te avisaremos por WhatsApp/correo cuando quede lista.</p>
@@ -135,7 +134,6 @@
       $("#helloSub").textContent = user.email;
       const ok = profile && profile.active;
       $("#pendingNote").hidden = !!ok;
-      $("#linkPanel").hidden = !(ok && profile.role === "owner");
     }
 
     formLogin.addEventListener("submit", async (e) => {
