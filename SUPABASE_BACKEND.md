@@ -42,17 +42,18 @@ ni auto-activarse editando su fila).
 
 ## Publicar una versión (flujo normal)
 
-1. Compila el instalador y súelo como asset a un **GitHub Release**
-   del repo (el asset debe descargar DIRECTO, sin página intermedia).
-2. En tu PC calcula el hash: `certutil -hashfile instalador.exe SHA256`
-   (minúsculas, 64 caracteres).
-3. En `panel.html` → Versiones → completa versión (semver), URL, SHA,
-   changelog (≤300) → **Guardar** con "Publicar" marcado
-   (retira la anterior sola).
-4. Botón **Descargar version.json** → súbelo al repo web en
+1. En `panel.html` → Versiones → escribe la versión (semver) y qué
+   cambió (≤300) → elige el `.exe` → **Subir y guardar versión**.
+   El archivo se guarda en la propia web (bucket `installers` de
+   Supabase, lectura pública, escritura solo owner), el SHA-256 se
+   calcula solo y la URL queda directa para el actualizador.
+   Con "Publicar" marcado se retira la anterior sola.
+2. Botón **Descargar version.json** → súbelo al repo web en
    `versiones/version.json` → commit + push → espera 1–2 min a Pages.
-5. El POS (versión instalada < publicada) avisará solo; verifica el
+3. El POS (versión instalada < publicada) avisará solo; verifica el
    SHA antes de instalar y nunca hace downgrade.
+4. Al eliminar una versión se borra también su archivo guardado.
+   Ojo al espacio: cada instalador pesa ~40 MB (límite 100 MB c/u).
 
 ## Puertas del front (defensa en profundidad)
 

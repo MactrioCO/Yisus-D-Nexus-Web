@@ -26,8 +26,9 @@ Landing Page/
 | Capturas | ✅ reales: login, dashboard, productos, clientes |
 | Backend nube | ✅ Supabase Auth + 3 tablas `landing_*` con RLS (ver `SUPABASE_BACKEND.md`) |
 | Cuentas | ✅ `cuenta.html` (registro/login, activación por owner) |
-| Panel owner | ✅ `panel.html` (usuarios, versiones, licencias) |
-| Descargas | ✅ `descargas.html` + `versiones/version.json` |
+| Panel owner | ✅ `panel.html` (usuarios, versiones con subida de .exe a la web, licencias; puerta owner, customers van a novedades) |
+| Descargas | ✅ `descargas.html` + `versiones/version.json` (solo cuentas activas) |
+| Novedades | ✅ `novedades.html` (historial para customers activos) |
 | Video demo | ⬜ pendiente (`captures/demo.mp4`) |
 | Captura de Ventas/POS para el hero | ⬜ pendiente (el hero usa el mock hasta entonces) |
 | Contacto | ✅ WhatsApp + correo reales |

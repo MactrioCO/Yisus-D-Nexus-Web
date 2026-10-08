@@ -64,22 +64,21 @@
         <section id="tab-releases" hidden>
           <form class="form-card" id="formRel">
             <h3 style="margin-top:0">Publicar versión</h3>
+            <p class="muted">El archivo se guarda en la propia web. El SHA-256 se calcula solo y la URL queda directa para el actualizador.</p>
             <div class="grid2">
               <label class="field">Versión (semver) *
                 <input type="text" name="version" required placeholder="0.2.1" pattern="[0-9]+\.[0-9]+\.[0-9]+" />
               </label>
-              <label class="field">SHA-256 (64 minúsculas) *
-                <input type="text" name="sha256" required placeholder="certutil -hashfile instalador.exe SHA256" pattern="[0-9a-f]{64}" style="font-family:monospace" />
+              <label class="field">Instalador .exe * (máx. 100 MB)
+                <input type="file" name="file" required accept=".exe,application/octet-stream" />
               </label>
             </div>
-            <label class="field">URL directa del .exe *
-              <input type="url" name="url" required placeholder="https://github.com/…/releases/download/…/Setup.exe" />
-            </label>
             <label class="field">Qué cambió (máx. 300, lo ve el usuario) *
               <textarea name="changelog" required maxlength="300" rows="2" placeholder="Correcciones y mejoras…"></textarea>
             </label>
             <label class="check"><input type="checkbox" name="published" checked /> Publicar de una vez (retira la anterior)</label>
-            <button class="btn btn-primary btn-sm" type="submit" id="btnRel">Guardar versión</button>
+            <div class="alert info" id="upProg" hidden>Preparando…</div>
+            <button class="btn btn-primary btn-sm" type="submit" id="btnRel">Subir y guardar versión</button>
           </form>
           <div class="table-wrap"><table class="admin">
             <thead><tr><th>Versión</th><th>Estado</th><th>Changelog</th><th>Fecha</th><th>Acciones</th></tr></thead>
@@ -137,7 +136,7 @@
 
   <script src="js/sb-config.js?v=2"></script>
   <script type="module">
-    import { sb, requireOwner, deny, signOut, niceErr } from "./js/sb.js?v=2";
+    import { sb, requireOwner, myProfile, deny, signOut, niceErr } from "./js/sb.js?v=2";
 
     const $ = (s) => document.querySelector(s);
     $("#year").textContent = new Date().getFullYear();
@@ -218,7 +217,32 @@
       } catch (err) { showMsg(niceErr(err), "err"); }
     });
 
-    /* ---------- Versiones ---------- */
+    /* ---------- Versiones (archivo se guarda en la web) ---------- */
+    const exePath = (v) => "v" + v + "/YisusPOS_Setup_" + v + "_win64.exe";
+    const exeUrl = (v) => window.NEXUS_SB.url + "/storage/v1/object/public/installers/" + exePath(v);
+
+    async function sha256Hex(file) {
+      const buf = await file.arrayBuffer();
+      const d = await crypto.subtle.digest("SHA-256", buf);
+      return Array.from(new Uint8Array(d)).map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+    function uploadInstaller(file, path, onProgress) {
+      return sb.auth.getSession().then(({ data }) => {
+        if (!data.session) throw new Error("NO_SESSION");
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", window.NEXUS_SB.url + "/storage/v1/object/installers/" + path);
+          xhr.setRequestHeader("apikey", window.NEXUS_SB.anonKey);
+          xhr.setRequestHeader("Authorization", "Bearer " + data.session.access_token);
+          xhr.setRequestHeader("Content-Type", "application/octet-stream");
+          xhr.setRequestHeader("x-upsert", "true");
+          xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+          xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("Subida falló (HTTP " + xhr.status + ")")));
+          xhr.onerror = () => reject(new Error("Error de red subiendo el archivo"));
+          xhr.send(file);
+        });
+      });
+    }
     function vjOf(r) {
       return JSON.stringify({ version: r.version, url: r.url, sha256: r.sha256, changelog: r.changelog }, null, 2);
     }
@@ -245,25 +269,39 @@
     $("#formRel").addEventListener("submit", async (e) => {
       e.preventDefault();
       hideMsg();
+      const btn = $("#btnRel"), prog = $("#upProg");
+      btn.disabled = true;
       try {
         await requireOwner();
         const fd = new FormData($("#formRel"));
-        const row = {
-          version: String(fd.get("version")).trim(),
-          url: String(fd.get("url")).trim(),
-          sha256: String(fd.get("sha256")).trim().toLowerCase(),
-          changelog: String(fd.get("changelog")).trim(),
-          published: !!fd.get("published"),
-        };
+        const version = String(fd.get("version")).trim();
+        const file = fd.get("file");
+        const changelog = String(fd.get("changelog")).trim();
+        if (!file || !file.size) throw new Error("Elige el archivo .exe.");
+        if (file.size > 100 * 1024 * 1024) throw new Error("El archivo supera 100 MB.");
+        prog.hidden = false;
+        prog.textContent = "Calculando SHA-256…";
+        const sha = await sha256Hex(file);
+        prog.textContent = "Subiendo a la web… 0%";
+        await uploadInstaller(file, exePath(version), (p) => {
+          prog.textContent = "Subiendo a la web… " + Math.round(p * 100) + "%";
+        });
+        prog.textContent = "Guardando versión…";
+        const row = { version, url: exeUrl(version), sha256: sha, changelog, published: !!fd.get("published") };
         const { data, error } = await sb.from("landing_releases").insert(row).select().single();
         if (error) throw error;
         if (row.published) {
           await sb.from("landing_releases").update({ published: false }).neq("id", data.id);
         }
         $("#formRel").reset();
+        prog.hidden = true;
         await loadReleases();
-        showMsg("Versión " + row.version + " guardada.", "ok");
-      } catch (err) { showMsg(niceErr(err), "err"); }
+        showMsg("Versión " + version + " publicada con archivo en la web.", "ok");
+      } catch (err) {
+        prog.hidden = true;
+        showMsg(niceErr(err), "err");
+      }
+      btn.disabled = false;
     });
     $("#relBody").addEventListener("click", async (e) => {
       const b = e.target.closest("button[data-act]");
@@ -283,6 +321,8 @@
           if (b.dataset.p !== "1" && !confirm("Eliminar v" + b.dataset.v + "?")) return;
           const { error } = await sb.from("landing_releases").delete().eq("id", id);
           if (error) throw error;
+          // Borra también el archivo guardado en la web (si existe).
+          await sb.storage.from("installers").remove([exePath(b.dataset.v)]);
         }
         await loadReleases();
         showMsg("Versiones actualizadas. Recuerda regenerar versiones/version.json si cambió la publicada.", "ok");
@@ -386,6 +426,12 @@
         $("#panelBody").hidden = false;
         await Promise.all([loadUsers(), loadReleases(), loadLicenses()]);
       } catch (err) {
+        // Owner entra; customer activo va a novedades; resto al inicio.
+        try {
+          const st = await myProfile();
+          if (st.user && st.profile && st.profile.active) { location.replace("novedades.html"); return; }
+          if (st.user) { deny("pending"); return; }
+        } catch (_) { /* sigue al deny de owner */ }
         deny("owner");
       }
     })();

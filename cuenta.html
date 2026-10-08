@@ -134,6 +134,8 @@
       $("#helloSub").textContent = user.email;
       const ok = profile && profile.active;
       $("#pendingNote").hidden = !!ok;
+      // Activa: pasa directo a su lugar (owner al panel, customer a novedades).
+      if (ok) { location.replace(profile.role === "owner" ? "panel.html" : "novedades.html"); }
     }
 
     formLogin.addEventListener("submit", async (e) => {

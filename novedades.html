@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Novedades — Yisus D Nexus</title>
+  <meta name="description" content="Historial de actualizaciones de Yisus D Nexus para clientes." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0b1526" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="stylesheet" href="styles.css?v=3" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav scrolled" style="position:sticky">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html" aria-label="Yisus D Nexus — inicio">
+        <img src="assets/logo.png" alt="Logo de Yisus D Nexus" width="40" height="40" />
+        <span><b>Yisus D Nexus</b><small>POS · OFFLINE-FIRST</small></span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="descargas.html">Descargas</a></li>
+          <li><a href="novedades.html" class="active">Novedades</a></li>
+          <li><a href="cuenta.html">Cuenta</a></li>
+        </ul>
+      </nav>
+      <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="section" id="contenido" style="padding-top:60px">
+    <div class="wrap page-narrow">
+      <span class="eyebrow">NOVEDADES</span>
+      <h2 class="sec-title">Qué se actualizó.</h2>
+      <p class="sec-sub" id="hello">Historial de versiones publicadas para tu negocio.</p>
+      <div class="alert info" id="loading">Cargando novedades…</div>
+      <div id="rels"></div>
+      <div class="demo-cta" style="justify-content:flex-start;margin-top:8px">
+        <a class="btn btn-primary btn-sm" href="descargas.html">Descargar última versión</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-base">
+        <span>© <span id="year">2026</span> Yisus D Nexus · Yisus D Dev.</span>
+        <span><a href="index.html" style="color:#94a3b8">Volver al inicio</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/sb-config.js?v=2"></script>
+  <script type="module">
+    import { sb, myProfile, deny, niceErr } from "./js/sb.js?v=2";
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const burger = document.getElementById("burger");
+    burger.addEventListener("click", () => {
+      const open = document.body.classList.toggle("menu-open");
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+    (async () => {
+      const loading = document.getElementById("loading");
+      try {
+        const { user, profile } = await myProfile();
+        if (!user) { deny("login"); return; }
+        if (!profile || !profile.active) { deny("pending"); return; }
+        document.getElementById("hello").textContent =
+          "Historial de versiones para " + (profile.business_name || user.email) + ".";
+        const { data, error } = await sb
+          .from("landing_releases")
+          .select("version,changelog,created_at")
+          .eq("published", true)
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        loading.hidden = true;
+        document.getElementById("rels").innerHTML = (data || []).map((r, i) => `
+          <article class="form-card">
+            <span class="pill"><span class="dot"></span>v${esc(r.version)}${i === 0 ? " · última" : ""}</span>
+            <p style="white-space:pre-wrap;margin:12px 0 0">${esc(r.changelog)}</p>
+            <p class="muted">Publicada el ${new Date(r.created_at).toLocaleString("es-CO", { dateStyle: "long" })}</p>
+          </article>`).join("") || `<div class="alert">Aún no hay versiones publicadas.</div>`;
+      } catch (e) {
+        loading.hidden = false;
+        loading.className = "alert err";
+        loading.textContent = "No se pudo cargar: " + niceErr(e);
+      }
+    })();
+  </script>
+</body>
+</html>
