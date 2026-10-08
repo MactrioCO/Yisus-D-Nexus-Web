@@ -14,7 +14,7 @@ El "backend" es el proyecto Supabase del POS, con 3 tablas propias
 | Tabla | Para qué | Lectura pública |
 |-------|----------|-----------------|
 | `landing_users` | Cuentas (id = auth.users.id, email, negocio, rol, activa) | Ninguna (cada uno solo su fila) |
-| `landing_releases` | Versiones del programa (semver, url directa, sha256, changelog ≤300, published) | Solo la última con `published=true` |
+| `landing_releases` | Versiones del programa (semver, url directa, sha256, changelog ≤300, published) | Solo la última con `published=true` (a nivel BD; la página `descargas.html` además exige cuenta activa) |
 | `landing_licenses` | Claves `YDNX-XXXX-XXXX` (negocio, activa, notas) | Ninguna (solo vía RPC `validate_license`) |
 
 Funciones: `is_landing_owner()`, `latest_published_release_id()`,
@@ -65,7 +65,7 @@ con `{"p_key": "YDNX-XXXX-XXXX"}` y anon key → `true`/`false`.
 
 - [ ] Me registro como customer → quedo pendiente (active=false).
 - [ ] El owner me activa desde el panel → puedo entrar.
-- [ ] Publico la 0.2.1 de prueba → `descargas.html` la muestra.
+- [ ] Publico la 0.2.1 de prueba → `descargas.html` la muestra (entrando con cuenta activa; sin sesión pide login, sin activación muestra pendiente).
 - [ ] `versiones/version.json` abre por HTTPS con el formato del contrato.
 - [ ] El .exe del release descarga directo (sin login de GitHub).
 - [ ] Un customer no puede verse la fila de otro ni hacerse owner
