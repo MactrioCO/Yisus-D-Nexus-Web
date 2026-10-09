@@ -343,6 +343,7 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   font: 800 24px var(--font); position: relative;
   box-shadow: 0 14px 30px -10px rgba(37, 99, 235, 0.7); transition: transform 0.18s; }
 .chat-btn:hover { transform: scale(1.07); }
+.chat-btn img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
 .chat-btn i { position: absolute; top: 2px; right: 2px; width: 13px; height: 13px;
   border-radius: 50%; background: #22c55e; border: 2.5px solid #fff; font-style: normal; }
 .chat-panel { position: fixed; right: 20px; bottom: 92px; z-index: 81; width: 344px;

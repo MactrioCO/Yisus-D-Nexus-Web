@@ -41,7 +41,7 @@ function build() {
   stack.className = "float-stack";
   stack.innerHTML = `
     <a class="wa-btn" href="${WA_LINK}" target="_blank" rel="noopener" aria-label="Hablar por WhatsApp">☎</a>
-    <button class="chat-btn" id="cbotOpen" aria-label="Abrir chat con Mactrio Bot"><span>M</span><i></i></button>`;
+    <button class="chat-btn" id="cbotOpen" aria-label="Abrir chat con Mactrio Bot"><img src="assets/mactrio-bot.png" alt="Mactrio Bot" width="56" height="56" /><i></i></button>`;
   const panel = document.createElement("div");
   panel.className = "chat-panel";
   panel.id = "cbotPanel";
