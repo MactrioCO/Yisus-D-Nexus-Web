@@ -26,7 +26,7 @@ Landing Page/
 | Capturas | ✅ reales: login, dashboard, productos, clientes |
 | Backend nube | ✅ Supabase Auth + 3 tablas `landing_*` con RLS (ver `SUPABASE_BACKEND.md`) |
 | Cuentas | ✅ `cuenta.html` (registro/login, activación por owner) |
-| Panel owner | ✅ `panel.html` (usuarios, versiones con subida de .exe a la web, licencias; puerta owner, customers van a novedades) |
+| Panel owner | ✅ `consola.html` (ruta no obvia, puerta owner: usuarios, versiones con subida de .exe a la web, licencias con aceptar/rechazar) |
 | Descargas | ✅ `descargas.html` + `versiones/version.json` (solo cuentas activas) |
 | Novedades | ✅ `novedades.html` (historial para customers activos + Mi licencia con solicitud) + tira en el hero del index |
 | Licencias | ✅ por solicitud: el customer pide, el owner acepta/rechaza viendo correo y negocio |

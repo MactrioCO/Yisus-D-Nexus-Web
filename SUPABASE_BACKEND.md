@@ -38,11 +38,11 @@ ni auto-activarse editando su fila).
    WHERE email = 'TU_CORREO';
    ```
    (SQL Editor del dashboard. Solo esta vez: aún no hay owner que lo haga.)
-4. Entra a `panel.html` y verifica que ves las 3 pestañas.
+4. Entra a `consola.html` y verifica que ves las 3 pestañas.
 
 ## Publicar una versión (flujo normal)
 
-1. En `panel.html` → Versiones → escribe la versión (semver) y qué
+1. En `consola.html` → Versiones → escribe la versión (semver) y qué
    cambió (≤300) → elige el `.exe` → **Subir y guardar versión**.
    El archivo se guarda en la propia web (bucket `installers` de
    Supabase, lectura pública, escritura solo owner), el SHA-256 se
@@ -60,7 +60,7 @@ ni auto-activarse editando su fila).
 El blindaje real son Auth + RLS (probado). Encima, las páginas
 privadas rebotan al inicio si no hay permiso:
 
-- `panel.html` → `requireOwner()` en cada carga y antes de cada
+- `consola.html` → `requireOwner()` en cada carga y antes de cada
   escritura; si falla → `index.html?denied=owner`.
 - `descargas.html` → sin sesión → `?denied=login`; pendiente →
   `?denied=pending`. Solo cuentas activas ven el instalador.
@@ -76,10 +76,10 @@ privadas rebotan al inicio si no hay permiso:
   a nivel de tabla (`YDNX-XXXX-XXXX`).
 - El customer la ve en `novedades.html` → **Mi licencia** (pendiente,
   activa con clave, o rechazada con opción de pedir de nuevo).
-- El owner la ve en `panel.html` → **Solicitudes pendientes** con
+- El owner la ve en `consola.html` → **Solicitudes pendientes** con
   negocio/correo y la **Acepta** (activa) o **Rechaza**.
 - La fila nace `pending` + inactiva (no valida). El owner la ve en
-  `panel.html` → **Solicitudes pendientes** con negocio/correo y la
+  `consola.html` → **Solicitudes pendientes** con negocio/correo y la
   **Acepta** (activa) o **Rechaza**. También puede emitir directas.
 - RLS: el customer solo inserta la suya (`requested_by` propio, formato
   de clave, sin activarse) y solo lee las suyas; jamás se auto-aprueba
@@ -87,7 +87,7 @@ privadas rebotan al inicio si no hay permiso:
 
 ## Probar la validación de licencias
 
-`panel.html` → Licencias → genera una clave → usa **Probar validación**.
+`consola.html` → Licencias → genera una clave → usa **Probar validación**.
 El POS usará lo mismo después: `POST /rest/v1/rpc/validate_license`
 con `{"p_key": "YDNX-XXXX-XXXX"}` y anon key → `true`/`false`.
 (La implementación dentro del POS la hace el otro asistente.)

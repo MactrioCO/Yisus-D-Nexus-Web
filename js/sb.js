@@ -1,6 +1,6 @@
 /* YISUS D NEXUS — cliente Supabase compartido (landing).
    Se importa desde las páginas como módulo ES. */
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm";
 
 const cfg = window.NEXUS_SB || {};
 if (!cfg.url || !cfg.anonKey) {

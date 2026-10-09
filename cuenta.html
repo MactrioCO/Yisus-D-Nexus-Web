@@ -6,6 +6,8 @@
   <title>Mi cuenta — Yisus D Nexus</title>
   <meta name="description" content="Accede a tu cuenta de Yisus D Nexus: descargas, versiones y panel del negocio." />
   <meta name="theme-color" content="#0b1526" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
   <link rel="stylesheet" href="styles.css?v=2" />
 </head>
@@ -137,7 +139,7 @@
       const ok = profile && profile.active;
       $("#pendingNote").hidden = !!ok;
       // Activa: pasa directo a su lugar (owner al panel, customer a novedades).
-      if (ok) { location.replace(profile.role === "owner" ? "panel.html" : "novedades.html"); }
+      if (ok) { location.replace(profile.role === "owner" ? "consola.html" : "novedades.html"); }
     }
 
     formLogin.addEventListener("submit", async (e) => {
