@@ -40,6 +40,7 @@ function build() {
   const stack = document.createElement("div");
   stack.className = "float-stack";
   stack.innerHTML = `
+    <button class="lang-btn" id="cbotLang" aria-label="Cambiar idioma / Switch language">🌐 EN</button>
     <a class="wa-btn" href="${WA_LINK}" target="_blank" rel="noopener" aria-label="Hablar por WhatsApp">☎</a>
     <button class="chat-btn" id="cbotOpen" aria-label="Abrir chat con Mactrio Bot"><img src="assets/mactrio-bot.png" alt="Mactrio Bot" width="56" height="56" /><i></i></button>`;
   const panel = document.createElement("div");
@@ -70,6 +71,23 @@ function build() {
 
   document.getElementById("cbotOpen").addEventListener("click", toggle);
   document.getElementById("cbotClose").addEventListener("click", toggle);
+  paintLangBtn();
+  document.getElementById("cbotLang").addEventListener("click", () => {
+    const next = (document.documentElement.lang || "es").startsWith("en") ? "es" : "en";
+    if (window.NexusI18n) window.NexusI18n.set(next);
+  });
+  window.addEventListener("langchange", () => {
+    paintLangBtn();
+    if (!open) return;
+    const box = document.getElementById("cbotMsgs");
+    box.innerHTML = "";
+    if (chatId) {
+      seen = new Set();
+      pull();
+    } else {
+      greet();
+    }
+  });
   document.getElementById("cbotForm").addEventListener("submit", onSend);
   document.getElementById("cbotHuman").addEventListener("submit", onHandoff);
   document.getElementById("cbotHumanBack").addEventListener("click", () => {
@@ -85,6 +103,12 @@ function build() {
     q.appendChild(btn);
   });
   greet();
+}
+
+function paintLangBtn() {
+  const b = document.getElementById("cbotLang");
+  if (!b) return;
+  b.textContent = (document.documentElement.lang || "es").startsWith("en") ? "🌐 ES" : "🌐 EN";
 }
 
 function toggle(force) {
@@ -129,13 +153,23 @@ function bubble(m) {
   }
   box.appendChild(d);
   if (stick) toBottom(box);
+  if ((m.sender === "bot" || m.sender === "owner") && window.NexusI18n
+      && document.documentElement.lang === "en") {
+    const span = d.querySelector("span");
+    window.NexusI18n.toEN(m.body).then((en) => {
+      if (en && en !== m.body && span && span.isConnected) {
+        if (m.sender === "bot") span.innerHTML = renderRich(en);
+        else span.textContent = en;
+      }
+    });
+  }
 }
 
 function greet() {
   const box = document.getElementById("cbotMsgs");
   if (box.children.length) return;
   const d = document.createElement("div");
-  d.className = "cm cm-bot";
+  d.className = "cm-sys";
   d.innerHTML = `<small>Mactrio Bot</small><span>¡Hola! Soy Mactrio Bot. Pregúntame de precios, demo, requisitos o licencias… o habla con un humano. 👇</span>`;
   box.appendChild(d);
 }
@@ -175,7 +209,7 @@ function closedView() {
   const box = document.getElementById("cbotMsgs");
   if (!document.getElementById("cbotClosed")) {
     const d = document.createElement("div");
-    d.className = "cm cm-bot";
+    d.className = "cm-sys";
     d.id = "cbotClosed";
     d.innerHTML = `<small>Mactrio Bot</small><span>Esta conversación se cerró. Si necesitas más, abre una nueva. 👇</span>`;
     box.appendChild(d);

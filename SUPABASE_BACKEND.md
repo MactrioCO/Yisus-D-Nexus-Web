@@ -19,6 +19,8 @@ El "backend" es el proyecto Supabase del POS, con 3 tablas propias
 
 Funciones: `is_landing_owner()`, `latest_published_release_id()`,
 `validate_license(p_key)` (devuelve true/false, sin exponer la tabla),
+`published_notes()` (historial público sin url/sha),
+`chat_start/send/bot_say/history/status` (chat anónimo por visitor_key),
 trigger `landing_users_guard_trg` (un customer no puede auto-ascenderse
 ni auto-activarse editando su fila).
 

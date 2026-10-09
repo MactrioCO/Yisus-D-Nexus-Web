@@ -29,7 +29,9 @@ Landing Page/
 | Panel owner | ✅ `consola.html` (ruta no obvia, puerta owner: usuarios, versiones con subida de .exe a la web, licencias con aceptar/rechazar) |
 | Descargas | ✅ `descargas.html` + `versiones/version.json` (solo cuentas activas) |
 | Novedades | ✅ `novedades.html` (historial para customers activos + Mi licencia con solicitud) + tira en el hero del index |
-| Chat y WhatsApp | ✅ botón flotante de WhatsApp + Mactrio Bot (respuestas rápidas, pase a humano) en las 6 páginas; pestaña Conversación en el panel |
+| Chat y WhatsApp | ✅ botón flotante de WhatsApp + Mactrio Bot (respuestas rápidas, pase a humano) en las 7 páginas; pestaña Conversación en el panel |
+| Notas y manual | ✅ `notas.html` (historial público con notas ilimitadas desde el panel) + `manuales/manual-usuario.pdf` (13 págs, Ing Yisus D) |
+| Inglés | ✅ botón 🌐 ES/EN (diccionario 448 entradas, bot + respuestas del dueño traducidas) |
 | Licencias | ✅ por solicitud: el customer pide, el owner acepta/rechaza viendo correo y negocio |
 | Video demo | ⬜ pendiente (`captures/demo.mp4`) |
 | Captura de Ventas/POS para el hero | ⬜ pendiente (el hero usa el mock hasta entonces) |

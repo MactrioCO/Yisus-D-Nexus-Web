@@ -6,7 +6,7 @@
   <title>Panel del owner — Yisus D Nexus</title>
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#0b1526" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co https://api.mymemory.translated.net; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
   <link rel="stylesheet" href="styles.css?v=4" />
@@ -79,6 +79,9 @@
             </div>
             <label class="field">Qué cambió (máx. 300, lo ve el usuario) *
               <textarea name="changelog" required maxlength="300" rows="2" placeholder="Correcciones y mejoras…"></textarea>
+            </label>
+            <label class="field">Notas de la versión (página pública, sin límite)
+              <textarea name="notes" rows="4" placeholder="Detalla todo lo que trae: novedades, mejoras, correcciones…"></textarea>
             </label>
             <label class="check"><input type="checkbox" name="published" checked /> Publicar de una vez (retira la anterior)</label>
             <div class="alert info" id="upProg" hidden>Preparando…</div>
@@ -165,6 +168,8 @@
     </div>
   </footer>
 
+  <script src="js/i18n_dict.js?v=1"></script>
+  <script src="js/i18n.js?v=1"></script>
   <script src="js/sb-config.js?v=2"></script>
   <script type="module" src="js/nav.js?v=1"></script>
   <script type="module" src="js/widget.js?v=1"></script>
@@ -294,6 +299,7 @@
             ${r.published
               ? `<button class="btn btn-ghost btn-sm" data-act="unpub" data-id="${r.id}">Retirar</button>`
               : `<button class="btn btn-ghost btn-sm" data-act="pub" data-id="${r.id}">Publicar</button>`}
+            <button class="btn btn-ghost btn-sm" data-act="notes" data-id="${r.id}">Notas ✎</button>
             <button class="btn btn-ghost btn-sm" data-act="del" data-id="${r.id}" data-v="${esc(r.version)}" data-p="${r.published ? 1 : 0}">Eliminar</button>
           </div></td>
         </tr>`).join("") || `<tr><td colspan="5">Sin versiones. Publica la primera arriba.</td></tr>`;
@@ -321,7 +327,7 @@
           prog.textContent = "Subiendo a la web… " + Math.round(p * 100) + "%";
         });
         prog.textContent = "Guardando versión…";
-        const row = { version, url: exeUrl(version), sha256: sha, changelog, published: !!fd.get("published") };
+        const row = { version, url: exeUrl(version), sha256: sha, changelog, notes: String(fd.get("notes") || "").trim().slice(0, 5000), published: !!fd.get("published") };
         const { data, error } = await sb.from("landing_releases").insert(row).select().single();
         if (error) throw error;
         if (row.published) {
@@ -349,6 +355,13 @@
           await sb.from("landing_releases").update({ published: false }).neq("id", id);
         } else if (b.dataset.act === "unpub") {
           const { error } = await sb.from("landing_releases").update({ published: false }).eq("id", id);
+          if (error) throw error;
+        } else if (b.dataset.act === "notes") {
+          const { data: row0, error: selErr } = await sb.from("landing_releases").select("notes,version").eq("id", id).single();
+          if (selErr) throw selErr;
+          const v = prompt("Notas de la v" + row0.version + " (página pública, sin límite):", row0.notes || "");
+          if (v === null) return;
+          const { error } = await sb.from("landing_releases").update({ notes: v.slice(0, 5000) }).eq("id", id);
           if (error) throw error;
         } else if (b.dataset.act === "del") {
           if (b.dataset.p === "1" && !confirm("Vas a eliminar la versión PUBLICADA v" + b.dataset.v + ". El POS dejará de ver actualizaciones. ¿Seguro?")) return;

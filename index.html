@@ -26,7 +26,7 @@
   <meta property="og:image" content="assets/logo.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <!-- [REEMPLAZAR] favicon definitivo cuando exista el set final -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co https://api.mymemory.translated.net; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
   <link rel="apple-touch-icon" href="assets/logo.png" />
@@ -154,7 +154,7 @@
     <!-- TIRA DE CONFIANZA -->
     <div class="trust" aria-label="Tecnologías">
       <div class="wrap trust-inner">
-        <span><b>Python 3.12</b> + Flet</span><span><b>SQLite</b> local</span><span><b>Supabase</b> espejo</span><span>Ticket térmico <b>ESC/POS</b></span><span><b>Excel</b> importar / exportar</span><span>Instalador <b>Windows</b></span>
+        <span><b>Python 3.12 + Flet</b></span><span><b>SQLite local</b></span><span><b>Supabase espejo</b></span><span><b>Ticket térmico ESC/POS</b></span><span><b>Excel importar / exportar</b></span><span><b>Instalador Windows</b></span>
       </div>
     </div>
 
@@ -299,7 +299,7 @@
     </section>
 
     <!-- VERSUS -->
-    <section class="section alt" id="versus" aria-label="Cuaderno contra Nexus">
+    <section class="section alt" id="versus" aria-label="Cuaderno vs Nexus">
       <div class="wrap">
         <div class="center">
           <span class="eyebrow reveal">CUADERNO VS NEXUS</span>
@@ -502,7 +502,7 @@
           <p style="color:#64748b">Hecho con 💙 en Colombia 🇨🇴</p>
         </div>
         <div><h4>PRODUCTO</h4><ul><li><a href="#que-es">Qué es</a></li><li><a href="#modulos">Módulos</a></li><li><a href="#funciones">Funciones</a></li><li><a href="#planes">Planes</a></li><li><a href="#demo">Descargar demo</a></li><li><a href="descargas.html">Descargas</a></li><li><a href="cuenta.html">Mi cuenta</a></li></ul></div>
-        <div><h4>AYUDA</h4><ul><li><a href="#como-funciona">Cómo funciona</a></li><li><a href="#versus">Cuaderno vs Nexus</a></li><li><a href="#faq">Preguntas frecuentes</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#preview">Capturas</a></li></ul></div>
+        <div><h4>AYUDA</h4><ul><li><a href="#como-funciona">Cómo funciona</a></li><li><a href="#versus">Cuaderno vs Nexus</a></li><li><a href="#faq">Preguntas frecuentes</a></li><li><a href="notas.html">Notas de versión</a></li><li><a href="manuales/manual-usuario.pdf">Manual de usuario (PDF)</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#preview">Capturas</a></li></ul></div>
         <div><h4>LEGAL</h4><ul><li><a href="legal.html#privacidad">Política de privacidad</a></li><li><a href="legal.html#terminos">Términos y condiciones</a></li></ul></div>
       </div>
       <div class="foot-base">
@@ -514,6 +514,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="js/i18n_dict.js?v=1"></script>
+  <script src="js/i18n.js?v=1"></script>
   <script src="site.config.js?v=2"></script>
   <script src="app.js?v=2"></script>
   <script>

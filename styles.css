@@ -370,6 +370,10 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
 /* ---------- Botones flotantes + chat ---------- */
 .float-stack { position: fixed; right: 20px; bottom: 22px; z-index: 80;
   display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.lang-btn { border: 1px solid var(--line); background: #fff; color: var(--ink-950);
+  font: 800 12.5px var(--font); border-radius: 99px; padding: 8px 15px; cursor: pointer;
+  box-shadow: var(--shadow-sm); transition: transform 0.18s; white-space: nowrap; }
+.lang-btn:hover { transform: scale(1.07); border-color: var(--brand-500); }
 .wa-btn { width: 56px; height: 56px; border-radius: 50%; background: #22c55e; color: #fff;
   display: flex; align-items: center; justify-content: center; font-size: 27px; text-decoration: none;
   box-shadow: 0 14px 30px -10px rgba(34, 197, 94, 0.7); transition: transform 0.18s; }
@@ -407,6 +411,11 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
 .cm-me { background: var(--brand-600); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
 .cm-owner { background: var(--ink-950); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
 .cm-owner small { color: #fbbf24; }
+.cm-sys { background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  border-bottom-left-radius: 4px; align-self: flex-start; max-width: 85%;
+  padding: 9px 13px; font-size: 13.5px; line-height: 1.45; }
+.cm-sys small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em;
+  color: var(--ink-500); margin-bottom: 3px; }
 .chat-quick { display: flex; gap: 7px; flex-wrap: wrap; padding: 10px 12px; border-top: 1px solid var(--line); }
 .chat-quick button { border: 1px solid var(--brand-500); background: var(--brand-50); color: var(--brand-700);
   font: 700 12.5px var(--font); border-radius: 99px; padding: 7px 13px; cursor: pointer; }
