@@ -353,8 +353,8 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
 .chat-head { display: flex; align-items: center; gap: 11px; padding: 13px 16px;
   background: var(--ink-950); color: #fff; }
 .chat-ava { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(140deg, var(--brand-500), #0891b2);
-  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+  overflow: hidden; display: block; }
+.chat-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .chat-head strong { display: block; font-size: 15px; }
 .chat-head small { color: #4ade80; font-size: 11.5px; font-weight: 700; }
 .chat-head button { margin-left: auto; background: none; border: 0; color: #94a3b8;

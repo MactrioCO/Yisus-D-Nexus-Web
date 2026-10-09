@@ -47,7 +47,7 @@ function build() {
   panel.id = "cbotPanel";
   panel.hidden = true;
   panel.innerHTML = `
-    <div class="chat-head"><span class="chat-ava">M</span>
+    <div class="chat-head"><span class="chat-ava"><img src="assets/mactrio-bot.png" alt="Mactrio Bot" width="36" height="36" /></span>
       <span><strong>Mactrio Bot</strong><small>● en línea</small></span>
       <button id="cbotClose" aria-label="Cerrar chat">×</button>
     </div>
