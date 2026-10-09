@@ -104,6 +104,7 @@
 
     (async () => {
       const loading = document.getElementById("loading");
+      if (window.NexusI18n) NexusI18n.loading(true, "Cargando…", "Loading…");
       try {
         // Puerta: sin sesión o sin activar, de vuelta al inicio.
         const { user, profile } = await myProfile();
@@ -118,7 +119,7 @@
           .maybeSingle();
         document.getElementById("loading").hidden = true;
         if (error) throw error;
-        if (!data) { document.getElementById("empty").hidden = false; return; }
+        if (!data) { document.getElementById("empty").hidden = false; if (window.NexusI18n) NexusI18n.loading(false); return; }
         document.getElementById("relCard").hidden = false;
         document.getElementById("relVer").textContent = "v" + data.version;
         document.getElementById("relChange").textContent = data.changelog;
@@ -126,7 +127,9 @@
           "Publicada el " + new Date(data.created_at).toLocaleString("es-CO", { dateStyle: "long" });
         document.getElementById("relBtn").href = data.url;
         document.getElementById("relSha").textContent = data.sha256;
+        if (window.NexusI18n) NexusI18n.loading(false);
       } catch (e) {
+        if (window.NexusI18n) NexusI18n.loading(false);
         const l = document.getElementById("loading");
         l.hidden = false;
         l.className = "alert err";

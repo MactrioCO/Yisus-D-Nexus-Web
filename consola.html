@@ -200,6 +200,8 @@
       m.className = "alert " + (kind || "info");
       m.textContent = text;
       m.scrollIntoView({ block: "nearest" });
+      // Toda acción del panel termina aquí: oculta el loading.
+      if (window.NexusI18n) NexusI18n.loading(false);
     }
     function hideMsg() { $("#msg").hidden = true; }
     const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -212,6 +214,10 @@
         ["users", "releases", "licenses", "chat"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
         if (t.dataset.tab === "chat") startChatPoll(); else stopChatPoll();
         hideMsg();
+        if (window.NexusI18n) {
+          NexusI18n.loading(true);
+          setTimeout(() => NexusI18n.loading(false), 350);
+        }
       });
     });
 
@@ -236,6 +242,7 @@
     $("#usersBody").addEventListener("click", async (e) => {
       const b = e.target.closest("button[data-act]");
       if (!b) return;
+      if (window.NexusI18n) NexusI18n.loading(true, "Guardando…", "Saving…");
       try {
         const gate = await requireOwner();
         const id = b.dataset.id;
@@ -355,6 +362,7 @@
     $("#relBody").addEventListener("click", async (e) => {
       const b = e.target.closest("button[data-act]");
       if (!b) return;
+      if (window.NexusI18n) NexusI18n.loading(true, "Guardando…", "Saving…");
       try {
         await requireOwner();
         const id = b.dataset.id;
@@ -452,6 +460,7 @@
     $("#formLic").addEventListener("submit", async (e) => {
       e.preventDefault();
       hideMsg();
+      if (window.NexusI18n) NexusI18n.loading(true, "Generando…", "Generating…");
       try {
         await requireOwner();
         const fd = new FormData($("#formLic"));
@@ -472,6 +481,7 @@
     $("#tab-licenses").addEventListener("click", async (e) => {
       const b = e.target.closest("button[data-act]");
       if (!b) return;
+      if (window.NexusI18n) NexusI18n.loading(true, "Guardando…", "Saving…");
       try {
         await requireOwner();
         const id = b.dataset.id;
@@ -597,6 +607,7 @@
     });
     async function chatSetStatus(status, label) {
       if (!CHAT_ID) return;
+      if (window.NexusI18n) NexusI18n.loading(true, "Guardando…", "Saving…");
       try {
         await requireOwner();
         const { error } = await sb.from("landing_chats").update({ status }).eq("id", CHAT_ID);
@@ -614,6 +625,7 @@
       const text = inp.value.trim().slice(0, 1000);
       if (!text || !CHAT_ID) return;
       inp.value = "";
+      if (window.NexusI18n) NexusI18n.loading(true, "Enviando…", "Sending…");
       try {
         await requireOwner();
         const { error } = await sb.from("landing_chat_messages").insert({
@@ -624,6 +636,7 @@
         });
         if (error) throw error;
         await loadThread();
+        if (window.NexusI18n) NexusI18n.loading(false);
       } catch (err) {
         inp.value = text;
         showMsg(niceErr(err), "err");
@@ -637,10 +650,12 @@
     });
     (async () => {
       try {
+        if (window.NexusI18n) NexusI18n.loading(true, "Verificando permisos…", "Checking permissions…");
         ME = await requireOwner();
         $("#panelSub").textContent = "Sesión de " + ME.profile.business_name + " (" + ME.user.email + ").";
         $("#panelBody").hidden = false;
         await Promise.all([loadUsers(), loadReleases(), loadLicenses()]);
+        if (window.NexusI18n) NexusI18n.loading(false);
       } catch (err) {
         // Owner entra; customer activo va a novedades; resto al inicio.
         try {

@@ -140,6 +140,7 @@
 
     (async () => {
       const loading = document.getElementById("loading");
+      if (window.NexusI18n) NexusI18n.loading(true, "Cargando…", "Loading…");
       try {
         const { user, profile } = await myProfile();
         if (!user) { deny("login"); return; }
@@ -160,7 +161,9 @@
             <p style="white-space:pre-wrap;margin:12px 0 0">${esc(r.changelog)}</p>
             <p class="muted">Publicada el ${new Date(r.created_at).toLocaleString("es-CO", { dateStyle: "long" })}</p>
           </article>`).join("") || `<div class="alert">Aún no hay versiones publicadas.</div>`;
+        if (window.NexusI18n) NexusI18n.loading(false);
       } catch (e) {
+        if (window.NexusI18n) NexusI18n.loading(false);
         loading.hidden = false;
         loading.className = "alert err";
         loading.textContent = "No se pudo cargar: " + niceErr(e);

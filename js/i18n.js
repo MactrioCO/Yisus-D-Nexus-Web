@@ -172,5 +172,20 @@
     set: setLang,
     apply: function () { applyTo(lang() === "en"); },
     toEN: toEN,
+    /* Muestra/oculta el loading de marca durante operaciones. */
+    loading: function (show, msgEs, msgEn) {
+      var l = loaderEl();
+      if (!l) return;
+      if (show) {
+        l.classList.remove("done");
+        var msg = document.getElementById("loaderMsg");
+        if (msg && (msgEs || msgEn)) {
+          var en = document.documentElement.lang === "en";
+          msg.textContent = en ? msgEn || msgEs || "" : msgEs || msgEn || "";
+        }
+      } else {
+        hideLoader();
+      }
+    },
   };
 })();

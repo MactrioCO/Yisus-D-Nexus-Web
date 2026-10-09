@@ -158,6 +158,7 @@
       e.preventDefault();
       hideMsg();
       $("#btnLogin").disabled = true;
+      if (window.NexusI18n) NexusI18n.loading(true, "Iniciando sesión…", "Logging in…");
       try {
         const fd = new FormData(formLogin);
         const { error } = await sb.auth.signInWithPassword({
@@ -169,6 +170,7 @@
         await refresh();
         showMsg("Sesión iniciada.", "ok");
       } catch (err) { showMsg(niceErr(err), "err"); }
+      if (window.NexusI18n) NexusI18n.loading(false);
       $("#btnLogin").disabled = false;
     });
 
@@ -176,6 +178,7 @@
       e.preventDefault();
       hideMsg();
       $("#btnReg").disabled = true;
+      if (window.NexusI18n) NexusI18n.loading(true, "Creando cuenta…", "Creating account…");
       try {
         const fd = new FormData(formReg);
         const business = String(fd.get("business")).trim();
@@ -195,6 +198,7 @@
           showTab("login");
         }
       } catch (err) { showMsg(niceErr(err), "err"); }
+      if (window.NexusI18n) NexusI18n.loading(false);
       $("#btnReg").disabled = false;
     });
 
