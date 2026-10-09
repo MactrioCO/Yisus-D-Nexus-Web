@@ -1,4 +1,5 @@
-/* Botón de sesión del navbar (todas las páginas) + re-pintado en cambio de idioma. */
+/* Navbar: botón de sesión + link Panel solo para el owner activo.
+   Sin sesión o sin rol: el link Panel no existe en el DOM. */
 import { sb } from "./sb.js";
 
 const NAV_TXT = {
@@ -7,6 +8,7 @@ const NAV_TXT = {
 };
 
 let NAV_SESSION = null;
+let NAV_OWNER = false;
 
 function navLang() {
   return (document.documentElement.lang || "es").startsWith("en") ? "en" : "es";
@@ -43,15 +45,31 @@ function paintNav() {
       el.textContent = NAV_SESSION ? T.out : T.in;
     }
   });
+  const nav = document.getElementById("navLinks");
+  if (nav) {
+    let panelLi = nav.querySelector("[data-nav-panel]");
+    if (NAV_OWNER && !panelLi) {
+      panelLi = document.createElement("li");
+      const a = document.createElement("a");
+      a.setAttribute("data-nav-panel", "");
+      a.href = "consola.html";
+      a.textContent = "Panel";
+      if (location.pathname.includes("consola")) a.classList.add("active");
+      panelLi.appendChild(a);
+      nav.appendChild(panelLi);
+    } else if (!NAV_OWNER && panelLi) {
+      panelLi.remove();
+    }
+  }
   let item = document.querySelector("[data-nav-m]");
   if (!item) {
-    const nav = document.getElementById("navLinks");
-    if (!nav) return;
+    const nav2 = document.getElementById("navLinks");
+    if (!nav2) return;
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.setAttribute("data-nav-m", "");
     li.appendChild(a);
-    nav.appendChild(li);
+    nav2.appendChild(li);
     item = a;
   }
   if (NAV_SESSION) {
@@ -72,8 +90,18 @@ async function navSession() {
   try {
     const { data } = await sb.auth.getSession();
     NAV_SESSION = (data && data.session) || null;
+    NAV_OWNER = false;
+    if (NAV_SESSION) {
+      const { data: p } = await sb
+        .from("landing_users")
+        .select("role,active")
+        .eq("id", NAV_SESSION.user.id)
+        .maybeSingle();
+      NAV_OWNER = !!(p && p.role === "owner" && p.active);
+    }
   } catch (_) {
     NAV_SESSION = null;
+    NAV_OWNER = false;
   }
   paintNav();
 }
