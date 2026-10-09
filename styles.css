@@ -270,6 +270,19 @@ h2.sec-title { font-size: clamp(28px, 3.6vw, 42px); letter-spacing: -0.02em; lin
   border-radius: 7px; color: #fff; font-size: 14px; }
 /* (Video demo retirado: se agregará cuando exista captures/demo.mp4) */
 
+/* Planes */
+.price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.price-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 32px 28px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: 0.22s; }
+.price-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: var(--brand-500); }
+.price-card h3 { margin: 0; font-size: 21px; }
+.price-card .p-sub { color: var(--ink-500); font-size: 14.5px; margin: 6px 0 22px; }
+.price-card ul { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 11px; font-size: 14.5px; color: var(--ink-700); }
+.price-card li { display: flex; gap: 10px; align-items: flex-start; }
+.price-card li i { color: var(--ok); font-style: normal; font-weight: 800; }
+.price-card .btn { margin-top: auto; }
+.price-note { text-align: center; color: var(--ink-500); font-size: 13.5px; margin: 24px 0 0; }
+
 /* CTA final */
 .cta-final { background: linear-gradient(120deg, var(--brand-700), #0891b2); border-radius: 26px; color: #fff;
   text-align: center; padding: clamp(44px, 6vw, 76px) clamp(24px, 5vw, 60px); box-shadow: var(--shadow-lg); position: relative; overflow: hidden; }
@@ -401,6 +414,7 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .hero { padding-top: 120px; }
   .mod-grid { grid-template-columns: repeat(2, 1fr); }
+  .price-grid { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; }
   .b-3, .b-2, .b-4 { grid-column: span 6; }
   .b-2.half { grid-column: span 3; }
   .steps { grid-template-columns: repeat(2, 1fr); }
