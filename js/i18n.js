@@ -92,17 +92,33 @@
     }
   }
 
+  function loaderEl() {
+    return document.getElementById("loader");
+  }
+  function hideLoader() {
+    var l = loaderEl();
+    if (l) l.classList.add("done");
+  }
   function setLang(l, silent) {
     var toEN = l === "en";
     try {
       localStorage.setItem(LS, l);
     } catch (_) {}
     document.documentElement.lang = toEN ? "en" : "es";
+    if (!silent) {
+      var ldr = loaderEl();
+      if (ldr) {
+        ldr.classList.remove("done");
+        var msg = document.getElementById("loaderMsg");
+        if (msg) msg.textContent = toEN ? "Switching language…" : "Cambiando idioma…";
+      }
+    }
     applyTo(toEN);
     if (!silent) {
       try {
         window.dispatchEvent(new CustomEvent("langchange", { detail: { lang: l } }));
       } catch (_) {}
+      setTimeout(hideLoader, 700);
     }
   }
 
@@ -146,6 +162,10 @@
 
   observe();
   setLang(lang(), true);
+  window.addEventListener("load", function () {
+    setTimeout(hideLoader, 250);
+  });
+  setTimeout(hideLoader, 3500);
 
   window.NexusI18n = {
     lang: lang,
