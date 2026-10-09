@@ -270,6 +270,29 @@ h2.sec-title { font-size: clamp(28px, 3.6vw, 42px); letter-spacing: -0.02em; lin
   border-radius: 7px; color: #fff; font-size: 14px; }
 /* (Video demo retirado: se agregará cuando exista captures/demo.mp4) */
 
+/* Versus cuaderno vs Nexus */
+.vs-arena { display: grid; gap: 14px; }
+.vs-head { display: grid; grid-template-columns: 1fr 64px 1fr; font-size: 12.5px;
+  font-weight: 800; letter-spacing: 0.14em; color: var(--ink-500); padding: 0 6px; }
+.vs-row { display: grid; grid-template-columns: 1fr 64px 1fr; background: #fff;
+  border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow-sm); transition: transform 0.22s ease, box-shadow 0.22s ease; }
+.vs-row:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.vs-cell { padding: 22px 24px; }
+.vs-cell h4 { margin: 0 0 6px; font-size: 15.5px; }
+.vs-cell p { margin: 0; font-size: 14px; color: var(--ink-500); }
+.vs-bad h4 { color: #92400e; }
+.vs-good { background: linear-gradient(180deg, #fff, var(--brand-50)); border-left: 3px solid var(--brand-500); }
+.vs-good h4 { color: var(--brand-700); }
+.vs-mid { display: flex; align-items: center; justify-content: center;
+  background: repeating-linear-gradient(180deg, #f1f5f9 0 8px, #e2e8f0 8px 16px); }
+.vs-chip { width: 46px; height: 46px; border-radius: 50%; background: var(--ink-950); color: #fff;
+  font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm); transition: transform 0.22s; }
+.vs-row:hover .vs-chip { transform: rotate(-8deg) scale(1.08); }
+.verdict { text-align: center; margin-top: 34px; }
+.verdict h3 { font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.01em; margin: 0 0 20px; }
+
 /* Planes */
 .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .price-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
@@ -453,6 +476,11 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   .mock-cards { grid-template-columns: 1fr; }
   .mock-table { font-size: 12px; }
   .mock-float { display: none; }
+  .vs-row, .vs-head { grid-template-columns: 1fr; }
+  .vs-head span:nth-child(2) { display: none; }
+  .vs-head { gap: 6px; text-align: center; }
+  .vs-mid { padding: 8px; }
+  .vs-good { border-left: 0; border-top: 3px solid var(--brand-500); }
   .news-strip { flex-direction: column; align-items: flex-start; }
   .chat-wrap { grid-template-columns: 1fr; }
   .float-stack { right: 14px; bottom: 16px; }
