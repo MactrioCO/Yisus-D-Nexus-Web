@@ -29,6 +29,7 @@ Landing Page/
 | Panel owner | ✅ `consola.html` (ruta no obvia, puerta owner: usuarios, versiones con subida de .exe a la web, licencias con aceptar/rechazar) |
 | Descargas | ✅ `descargas.html` + `versiones/version.json` (solo cuentas activas) |
 | Novedades | ✅ `novedades.html` (historial para customers activos + Mi licencia con solicitud) + tira en el hero del index |
+| Chat y WhatsApp | ✅ botón flotante de WhatsApp + Mactrio Bot (respuestas rápidas, pase a humano) en las 6 páginas; pestaña Conversación en el panel |
 | Licencias | ✅ por solicitud: el customer pide, el owner acepta/rechaza viendo correo y negocio |
 | Video demo | ⬜ pendiente (`captures/demo.mp4`) |
 | Captura de Ventas/POS para el hero | ⬜ pendiente (el hero usa el mock hasta entonces) |

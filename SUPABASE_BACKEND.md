@@ -85,6 +85,18 @@ privadas rebotan al inicio si no hay permiso:
   de clave, sin activarse) y solo lee las suyas; jamás se auto-aprueba
   (sin policy de UPDATE). El owner lo ve y edita todo.
 
+## Chat (Mactrio Bot + humano, Supabase)
+
+Tablas `landing_chats` (visitante anónimo por `visitor_key`, nombre,
+contacto, estado bot/human/closed) y `landing_chat_messages`
+(bot/visitor/owner). Los visitantes operan SOLO por RPC
+(`chat_start/send/bot_say/history/status`): acceso directo denegado
+(verificado). El owner lee/escribe todo por policy.
+El widget (`js/widget.js` + `js/chatbot.js`) hace polling cada 2.5 s:
+sin recargar se ven los mensajes nuevos en ambos lados. El panel
+responde con su nombre de negocio. Sin realtime directo porque anon
+no puede suscribirse bajo RLS.
+
 ## Probar la validación de licencias
 
 `consola.html` → Licencias → genera una clave → usa **Probar validación**.

@@ -50,6 +50,7 @@
           <button class="tab active" data-tab="users" role="tab">Usuarios</button>
           <button class="tab" data-tab="releases" role="tab">Versiones</button>
           <button class="tab" data-tab="licenses" role="tab">Licencias</button>
+          <button class="tab" data-tab="chat" role="tab">Conversación <span id="chatPing" class="badge ok" hidden>•</span></button>
           <span style="flex:1"></span>
           <button class="btn btn-ghost btn-sm" id="btnOut" type="button">Cerrar sesión</button>
         </div>
@@ -130,6 +131,27 @@
             <p id="licTestOut" class="muted">—</p>
           </div>
         </section>
+
+        <!-- CONVERSACIÓN -->
+        <section id="tab-chat" hidden>
+          <div class="chat-wrap">
+            <div class="chat-list" id="chatList"><p class="muted">Cargando…</p></div>
+            <div class="chat-thread" id="chatThread" hidden>
+              <div class="chat-msgs" id="chatMsgs" aria-live="polite"></div>
+              <div class="row-actions" style="padding:10px 14px;border-top:1px solid var(--line)">
+                <span class="badge" id="chatStatus">—</span>
+                <span style="flex:1"></span>
+                <button class="btn btn-ghost btn-sm" id="chatTake" type="button">Atender</button>
+                <button class="btn btn-ghost btn-sm" id="chatClose" type="button">Cerrar</button>
+                <button class="btn btn-ghost btn-sm" id="chatOpen2" type="button">Reabrir</button>
+              </div>
+              <form class="chat-input" id="chatReplyForm">
+                <input id="chatReply" maxlength="1000" placeholder="Responder como dueño…" autocomplete="off" />
+                <button aria-label="Enviar">➤</button>
+              </form>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </main>
@@ -145,6 +167,7 @@
 
   <script src="js/sb-config.js?v=2"></script>
   <script type="module" src="js/nav.js?v=1"></script>
+  <script type="module" src="js/widget.js?v=1"></script>
   <script type="module">
     import { sb, requireOwner, myProfile, deny, signOut, niceErr } from "./js/sb.js?v=2";
 
@@ -172,7 +195,8 @@
       t.addEventListener("click", () => {
         document.querySelectorAll(".tab[data-tab]").forEach((x) => x.classList.remove("active"));
         t.classList.add("active");
-        ["users", "releases", "licenses"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
+        ["users", "releases", "licenses", "chat"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
+        if (t.dataset.tab === "chat") startChatPoll(); else stopChatPoll();
         hideMsg();
       });
     });
@@ -462,6 +486,126 @@
       $("#licTestOut").innerHTML = data === true
         ? "✅ Clave <strong>VÁLIDA y activa</strong>."
         : "❌ Clave <strong>inválida o revocada</strong>.";
+    });
+
+    /* ---------- Conversación (tiempo casi real por polling) ---------- */
+    let CHAT_ID = null;
+    let CHAT_SEEN = new Set();
+    let chatListTimer = null;
+    let chatThreadTimer = null;
+    const STATUS_ES = { bot: "con el bot", human: "contigo", closed: "cerrada" };
+
+    function chatScrollStick() {
+      const box = $("#chatMsgs");
+      const stick = box.scrollHeight - box.scrollTop - box.clientHeight < 90;
+      if (stick) box.scrollTop = box.scrollHeight;
+    }
+    function chatBubble(m) {
+      const d = document.createElement("div");
+      if (m.sender === "owner") {
+        d.className = "cm cm-owner";
+        d.innerHTML = `<small></small><span></span>`;
+        d.querySelector("small").textContent = m.author_name || "Soporte";
+        d.querySelector("span").textContent = m.body;
+      } else if (m.sender === "visitor") {
+        d.className = "cm cm-bot";
+        d.innerHTML = `<small></small><span></span>`;
+        d.querySelector("small").textContent = "Visitante";
+        d.querySelector("span").textContent = m.body;
+      } else {
+        d.className = "cm cm-bot";
+        d.style.opacity = "0.75";
+        d.innerHTML = `<small>Mactrio Bot</small><span></span>`;
+        d.querySelector("span").textContent = m.body;
+      }
+      $("#chatMsgs").appendChild(d);
+      chatScrollStick();
+    }
+    async function loadChats() {
+      await requireOwner();
+      const { data, error } = await sb.from("landing_chats").select("*").order("updated_at", { ascending: false }).limit(50);
+      if (error) throw error;
+      const rows = data || [];
+      const need = rows.some((c) => c.status === "human");
+      $("#chatPing").hidden = !need;
+      $("#chatList").innerHTML = rows.map((c) => `
+        <button class="chat-item${c.id === CHAT_ID ? " on" : ""}" data-id="${c.id}">
+          ${esc(c.name) || "Anónimo"} ${c.status === "human" ? "🔔" : ""}
+          <small>${esc(c.contact) || "sin contacto"} · ${c.status === "bot" ? "con el bot" : c.status === "human" ? "contigo" : "cerrada"} · ${fmtDate(c.updated_at)}</small>
+        </button>`).join("") || `<p class="muted">Sin conversaciones todavía.</p>`;
+      if (CHAT_ID && !rows.some((c) => c.id === CHAT_ID)) {
+        CHAT_ID = null;
+        $("#chatThread").hidden = true;
+      }
+    }
+    async function loadThread() {
+      if (!CHAT_ID) return;
+      const { data, error } = await sb.from("landing_chat_messages").select("*").eq("chat_id", CHAT_ID).order("created_at", { ascending: true });
+      if (error) throw error;
+      (data || []).forEach((m) => {
+        if (!CHAT_SEEN.has(m.id)) {
+          CHAT_SEEN.add(m.id);
+          chatBubble(m);
+        }
+      });
+      const { data: chat } = await sb.from("landing_chats").select("status").eq("id", CHAT_ID).maybeSingle();
+      if (chat) $("#chatStatus").textContent = "Conversación " + (STATUS_ES[chat.status] || chat.status);
+    }
+    async function selectChat(id) {
+      CHAT_ID = id;
+      CHAT_SEEN = new Set();
+      $("#chatMsgs").innerHTML = "";
+      $("#chatThread").hidden = false;
+      document.querySelectorAll(".chat-item").forEach((b) => b.classList.toggle("on", b.dataset.id === id));
+      await loadThread();
+    }
+    function startChatPoll() {
+      stopChatPoll();
+      loadChats().catch((e) => showMsg(niceErr(e), "err"));
+      chatListTimer = setInterval(() => { loadChats().catch(() => {}); }, 6000);
+      chatThreadTimer = setInterval(() => { if (CHAT_ID) loadThread().catch(() => {}); }, 2500);
+    }
+    function stopChatPoll() {
+      [chatListTimer, chatThreadTimer].forEach((t) => t && clearInterval(t));
+      chatListTimer = chatThreadTimer = null;
+    }
+    $("#chatList").addEventListener("click", (e) => {
+      const b = e.target.closest(".chat-item");
+      if (b) selectChat(b.dataset.id);
+    });
+    async function chatSetStatus(status, label) {
+      if (!CHAT_ID) return;
+      try {
+        await requireOwner();
+        const { error } = await sb.from("landing_chats").update({ status }).eq("id", CHAT_ID);
+        if (error) throw error;
+        await Promise.all([loadChats(), loadThread()]);
+        showMsg("Conversación " + label + ".", "ok");
+      } catch (err) { showMsg(niceErr(err), "err"); }
+    }
+    $("#chatTake").addEventListener("click", () => chatSetStatus("human", "en atención"));
+    $("#chatClose").addEventListener("click", () => chatSetStatus("closed", "cerrada"));
+    $("#chatOpen2").addEventListener("click", () => chatSetStatus("human", "reabierta"));
+    $("#chatReplyForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const inp = $("#chatReply");
+      const text = inp.value.trim().slice(0, 1000);
+      if (!text || !CHAT_ID) return;
+      inp.value = "";
+      try {
+        await requireOwner();
+        const { error } = await sb.from("landing_chat_messages").insert({
+          chat_id: CHAT_ID,
+          sender: "owner",
+          author_name: (ME && ME.profile && ME.profile.business_name) || "Soporte",
+          body: text,
+        });
+        if (error) throw error;
+        await loadThread();
+      } catch (err) {
+        inp.value = text;
+        showMsg(niceErr(err), "err");
+      }
     });
 
     /* ---------- Arranque con puerta ---------- */
