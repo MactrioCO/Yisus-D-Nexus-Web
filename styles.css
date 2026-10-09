@@ -29,6 +29,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 body {
   margin: 0; font-family: var(--font); background: var(--bg); color: var(--ink-950);
