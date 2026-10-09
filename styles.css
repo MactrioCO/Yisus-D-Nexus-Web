@@ -360,7 +360,8 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   font-size: 24px; cursor: pointer; line-height: 1; }
 .chat-head button:hover { color: #fff; }
 .chat-msgs { padding: 16px 14px; overflow-y: auto; display: flex; flex-direction: column;
-  gap: 9px; min-height: 220px; max-height: 300px; background: #f8fafc; }
+  gap: 9px; flex: 1 1 auto; min-height: 80px; background: #f8fafc; }
+.chat-head, .chat-quick, .chat-human, .chat-input { flex-shrink: 0; }
 .cm { max-width: 85%; padding: 9px 13px; border-radius: 14px; font-size: 13.5px; line-height: 1.45; }
 .cm small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em;
   color: var(--ink-500); margin-bottom: 3px; }

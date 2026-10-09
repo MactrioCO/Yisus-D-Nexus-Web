@@ -74,6 +74,7 @@ function build() {
   document.getElementById("cbotHuman").addEventListener("submit", onHandoff);
   document.getElementById("cbotHumanBack").addEventListener("click", () => {
     document.getElementById("cbotHuman").hidden = true;
+    document.getElementById("cbotQuick").style.display = "";
   });
   const q = document.getElementById("cbotQuick");
   QUICK.forEach((b) => {
@@ -189,6 +190,7 @@ function closedView() {
       vStatus = "bot";
       box.innerHTML = "";
       document.getElementById("cbotClosed")?.remove();
+      document.getElementById("cbotQuick").style.display = "";
       btn.remove();
       greet();
     });
@@ -252,6 +254,7 @@ async function onQuick(b) {
 
 function openHandoff() {
   document.getElementById("cbotHuman").hidden = false;
+  document.getElementById("cbotQuick").style.display = "none";
   document.getElementById("cbotName")?.focus();
 }
 
