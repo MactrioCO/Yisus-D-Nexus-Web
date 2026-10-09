@@ -104,7 +104,11 @@
               <textarea name="notes" rows="4" placeholder="Detalla todo lo que trae: novedades, mejoras, correcciones…"></textarea>
             </label>
             <label class="check"><input type="checkbox" name="published" checked /> Publicar de una vez (retira la anterior)</label>
-            <div class="alert info" id="upProg" hidden>Preparando…</div>
+            <div class="upbar" id="upProg" hidden>
+              <div class="upbar-top"><strong id="upLabel">Preparando…</strong><b id="upPct">0%</b></div>
+              <div class="upbar-track"><i id="upFill"></i></div>
+              <p class="muted" id="upSub"></p>
+            </div>
             <button class="btn btn-primary btn-sm" type="submit" id="btnRel">Subir y guardar versión</button>
           </form>
           <div class="table-wrap"><table class="admin">
@@ -344,6 +348,22 @@
         });
       });
     }
+    function setProg(p, label, sub) {
+      const prog = $("#upProg");
+      prog.hidden = false;
+      document.getElementById("upLabel").textContent = label;
+      if (sub !== undefined) document.getElementById("upSub").textContent = sub;
+      const fill = document.getElementById("upFill");
+      if (p === null || p === undefined) {
+        prog.classList.add("busy");
+        document.getElementById("upPct").textContent = "…";
+      } else {
+        prog.classList.remove("busy");
+        const pct = Math.round(p * 100);
+        fill.style.width = pct + "%";
+        document.getElementById("upPct").textContent = pct + "%";
+      }
+    }
     function vjOf(r) {
       return JSON.stringify({ version: r.version, url: r.url, sha256: r.sha256, changelog: r.changelog }, null, 2);
     }
@@ -381,14 +401,14 @@
         const changelog = String(fd.get("changelog")).trim();
         if (!file || !file.size) throw new Error("Elige el archivo .exe.");
         if (file.size > 100 * 1024 * 1024) throw new Error("El archivo supera 100 MB.");
-        prog.hidden = false;
-        prog.textContent = "Calculando SHA-256…";
+        setProg(null, "Calculando SHA-256…", "Leyendo " + file.name);
         const sha = await sha256Hex(file);
-        prog.textContent = "Subiendo a la web… 0%";
+        const mb = (file.size / 1048576).toFixed(1) + " MB";
+        setProg(0, "Subiendo a la web…", file.name + " · " + mb);
         await uploadInstaller(file, exePath(version), (p) => {
-          prog.textContent = "Subiendo a la web… " + Math.round(p * 100) + "%";
+          setProg(p, "Subiendo a la web…", file.name + " · " + mb);
         });
-        prog.textContent = "Guardando versión…";
+        setProg(1, "Guardando versión…", "Registrando la versión " + version);
         const row = { version, url: exeUrl(version), sha256: sha, changelog, notes: String(fd.get("notes") || "").trim().slice(0, 5000), published: !!fd.get("published") };
         const { data, error } = await sb.from("landing_releases").insert(row).select().single();
         if (error) throw error;

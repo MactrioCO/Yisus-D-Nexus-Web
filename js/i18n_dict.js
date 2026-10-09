@@ -382,6 +382,7 @@ const I18N_ES_EN = {
 "Subir y guardar versión": "Upload and save version",
 "Preparando…": "Preparing…",
 "Calculando SHA-256…": "Computing SHA-256…",
+"Subiendo a la web…": "Uploading to the web…",
 "Versión": "Version",
 "Fecha": "Date",
 "Publicar": "Publish",

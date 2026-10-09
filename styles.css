@@ -447,6 +447,25 @@ div.stat:hover { transform: none; box-shadow: var(--shadow-sm); border-color: va
 .linkrow:hover { color: var(--brand-700); }
 .linkrow small { display: block; font-weight: 500; color: var(--ink-500); font-size: 12px; margin-top: 2px; }
 
+/* ---------- Barra de subida premium ---------- */
+.upbar { background: #fff; border: 1px solid var(--line); border-radius: 15px;
+  padding: 18px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+.upbar-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.upbar-top strong { font-size: 14.5px; }
+.upbar-top b { font: 800 23px var(--mono); color: var(--brand-700); }
+.upbar-track { height: 13px; border-radius: 99px; background: #e8eef7; overflow: hidden; }
+.upbar-track i { display: block; height: 100%; width: 0; border-radius: 99px;
+  background: linear-gradient(90deg, var(--brand-600), #0891b2);
+  transition: width 0.25s ease; position: relative; overflow: hidden; }
+.upbar-track i::after { content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(-55deg, rgba(255, 255, 255, 0.35) 0 10px, transparent 10px 20px);
+  animation: stripes 1s linear infinite; }
+@keyframes stripes { to { background-position: 28px 0; } }
+.upbar.busy .upbar-track i { width: 35% !important; animation: slidebar 1.2s ease-in-out infinite; }
+.upbar.busy .upbar-track i::after { animation: none; }
+@keyframes slidebar { 0% { margin-left: -35%; } 100% { margin-left: 100%; } }
+.upbar p.muted { margin: 10px 0 0; font-size: 12.5px; }
+
 /* ---------- Conversación (panel owner) ---------- */
 .chat-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 18px; align-items: start; }
 .chat-list { display: flex; flex-direction: column; gap: 9px; max-height: 520px; overflow-y: auto; }
