@@ -558,8 +558,20 @@
         if (!t || !s) return;
         t.innerHTML = "<strong>v" + clean(data.version) + "</strong> — " + clean(data.changelog).slice(0, 140);
         s.hidden = false;
+        // Pill del hero siempre con la última publicada.
+        LATEST_VER = data.version;
+        paintPill();
       } catch (_) { /* sin novedades si falla */ }
     })();
+    function paintPill() {
+      if (!LATEST_VER) return;
+      const el = document.querySelector("[data-version]");
+      if (!el) return;
+      const en = document.documentElement.lang === "en";
+      el.textContent = "v" + LATEST_VER + (en ? " · Windows · .exe Installer" : " · Windows · Instalador .exe");
+    }
+    let LATEST_VER = null;
+    window.addEventListener("langchange", paintPill);
   </script>
 </body>
 </html>
