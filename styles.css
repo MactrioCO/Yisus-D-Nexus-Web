@@ -430,6 +430,23 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
 .chat-input button { width: 42px; height: 42px; flex-shrink: 0; border: 0; border-radius: 50%;
   background: var(--brand-600); color: #fff; font-size: 17px; cursor: pointer; }
 
+/* ---------- Resumen owner ---------- */
+.dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+.stat { background: #fff; border: 1px solid var(--line); border-radius: 15px; padding: 20px 14px;
+  text-align: center; box-shadow: var(--shadow-sm); cursor: pointer; font: inherit;
+  color: var(--ink-950); transition: transform 0.2s, box-shadow 0.2s; }
+.stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--brand-500); }
+.stat b { display: block; font-size: 31px; letter-spacing: -0.02em; }
+.stat span { font-size: 13px; font-weight: 700; color: var(--ink-500); }
+div.stat { cursor: default; }
+div.stat:hover { transform: none; box-shadow: var(--shadow-sm); border-color: var(--line); }
+.linkrow { display: block; width: 100%; text-align: left; background: none; border: 0;
+  border-bottom: 1px solid var(--line); padding: 10px 4px; cursor: pointer;
+  font: 600 14px var(--font); color: var(--ink-950); }
+.linkrow:last-child { border-bottom: 0; }
+.linkrow:hover { color: var(--brand-700); }
+.linkrow small { display: block; font-weight: 500; color: var(--ink-500); font-size: 12px; margin-top: 2px; }
+
 /* ---------- Conversación (panel owner) ---------- */
 .chat-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 18px; align-items: start; }
 .chat-list { display: flex; flex-direction: column; gap: 9px; max-height: 520px; overflow-y: auto; }
@@ -492,6 +509,7 @@ footer ul a { color: #cbd5e1; text-decoration: none; } footer ul a:hover { color
   .vs-good { border-left: 0; border-top: 3px solid var(--brand-500); }
   .news-strip { flex-direction: column; align-items: flex-start; }
   .chat-wrap { grid-template-columns: 1fr; }
+  .dash-grid { grid-template-columns: repeat(2, 1fr); }
   .float-stack { right: 14px; bottom: 16px; }
   .chat-panel { right: 12px; bottom: 86px; }
   .demo-creds { display: block; line-height: 2; }

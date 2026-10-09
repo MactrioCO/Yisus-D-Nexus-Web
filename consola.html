@@ -56,7 +56,8 @@
 
       <div id="panelBody" hidden>
         <div class="tabs" role="tablist">
-          <button class="tab active" data-tab="users" role="tab">Usuarios</button>
+          <button class="tab active" data-tab="home" role="tab">Resumen</button>
+          <button class="tab" data-tab="users" role="tab">Usuarios</button>
           <button class="tab" data-tab="releases" role="tab">Versiones</button>
           <button class="tab" data-tab="licenses" role="tab">Licencias</button>
           <button class="tab" data-tab="chat" role="tab">Conversación <span id="chatPing" class="badge ok" hidden>•</span></button>
@@ -65,8 +66,18 @@
         </div>
         <div class="alert" id="msg" hidden></div>
 
+        <!-- RESUMEN -->
+        <section id="tab-home">
+          <div class="dash-grid" id="dashStats"></div>
+          <div class="grid2">
+            <div class="form-card"><h3 style="margin-top:0">Cuentas por activar</h3><div id="dashUsers"><p class="muted">…</p></div></div>
+            <div class="form-card"><h3 style="margin-top:0">Chats por atender</h3><div id="dashChats"><p class="muted">…</p></div></div>
+          </div>
+          <div class="form-card"><h3 style="margin-top:0">Licencias por revisar</h3><div id="dashLic"><p class="muted">…</p></div></div>
+        </section>
+
         <!-- USUARIOS -->
-        <section id="tab-users">
+        <section id="tab-users" hidden>
           <div class="table-wrap"><table class="admin">
             <thead><tr><th>Negocio / correo</th><th>Rol</th><th>Estado</th><th>Registro</th><th>Acciones</th></tr></thead>
             <tbody id="usersBody"><tr><td colspan="5">Cargando…</td></tr></tbody>
@@ -211,14 +222,49 @@
       t.addEventListener("click", () => {
         document.querySelectorAll(".tab[data-tab]").forEach((x) => x.classList.remove("active"));
         t.classList.add("active");
-        ["users", "releases", "licenses", "chat"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
+        ["users", "releases", "licenses", "chat", "home"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
         if (t.dataset.tab === "chat") startChatPoll(); else stopChatPoll();
+        if (t.dataset.tab === "home") loadResumen().catch((e) => showMsg(niceErr(e), "err"));
         hideMsg();
         if (window.NexusI18n) {
           NexusI18n.loading(true);
           setTimeout(() => NexusI18n.loading(false), 350);
         }
       });
+    });
+
+    /* ---------- Resumen ---------- */
+    async function loadResumen() {
+      await requireOwner();
+      const [u, c, l, r, umap] = await Promise.all([
+        sb.from("landing_users").select("id,business_name,email,created_at").eq("active", false).order("created_at", { ascending: false }).limit(6),
+        sb.from("landing_chats").select("id,name,contact,updated_at").eq("status", "human").order("updated_at", { ascending: false }).limit(6),
+        sb.from("landing_licenses").select("id,key,requested_by,created_at").eq("status", "pending").order("created_at", { ascending: false }).limit(6),
+        sb.from("landing_releases").select("version").eq("published", true).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+        usersMap(),
+      ]);
+      [u, c, l].forEach((q) => { if (q.error) throw q.error; });
+      const nu = (u.data || []).length, nc = (c.data || []).length, nl = (l.data || []).length;
+      $("#dashStats").innerHTML = `
+        <button class="stat" data-go="users"><b>${nu}</b><span>Cuentas por activar</span></button>
+        <button class="stat" data-go="chat"><b>${nc}</b><span>Chats por atender</span></button>
+        <button class="stat" data-go="licenses"><b>${nl}</b><span>Licencias por revisar</span></button>
+        <div class="stat"><b>${r.data ? "v" + esc(r.data.version) : "—"}</b><span>Última versión</span></div>`;
+      $("#dashUsers").innerHTML = (u.data || []).map((x) => `
+        <button class="linkrow" data-go="users"><strong>${esc(x.business_name)}</strong><small>${esc(x.email)}</small></button>`).join("") || `<p class="muted">Al día 🎉</p>`;
+      $("#dashChats").innerHTML = (c.data || []).map((x) => `
+        <button class="linkrow" data-go="chat" data-id="${x.id}"><strong>${esc(x.name) || "Anónimo"}</strong><small>${esc(x.contact) || "sin contacto"}</small></button>`).join("") || `<p class="muted">Al día 🎉</p>`;
+      $("#dashLic").innerHTML = (l.data || []).map((x) => {
+        const who = (x.requested_by && umap[x.requested_by]) || null;
+        return `<button class="linkrow" data-go="licenses"><strong><code>${esc(x.key)}</code></strong><small>${who ? esc(who.business_name) + " · " + esc(who.email) : ""}</small></button>`;
+      }).join("") || `<p class="muted">Al día 🎉</p>`;
+    }
+    document.getElementById("tab-home").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-go]");
+      if (!b) return;
+      const tab = document.querySelector('.tab[data-tab="' + b.dataset.go + '"]');
+      if (tab) tab.click();
+      if (b.dataset.go === "chat" && b.dataset.id) selectChat(b.dataset.id);
     });
 
     /* ---------- Usuarios ---------- */
@@ -654,7 +700,7 @@
         ME = await requireOwner();
         $("#panelSub").textContent = "Sesión de " + ME.profile.business_name + " (" + ME.user.email + ").";
         $("#panelBody").hidden = false;
-        await Promise.all([loadUsers(), loadReleases(), loadLicenses()]);
+        await Promise.all([loadResumen(), loadUsers(), loadReleases(), loadLicenses()]);
         if (window.NexusI18n) NexusI18n.loading(false);
       } catch (err) {
         // Owner entra; customer activo va a novedades; resto al inicio.

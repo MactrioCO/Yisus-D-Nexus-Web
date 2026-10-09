@@ -97,7 +97,8 @@ contacto, estado bot/human/closed) y `landing_chat_messages`
 El widget (`js/widget.js` + `js/chatbot.js`) hace polling cada 2.5 s:
 sin recargar se ven los mensajes nuevos en ambos lados. El panel
 responde con su nombre de negocio. Sin realtime directo porque anon
-no puede suscribirse bajo RLS.
+no puede suscribirse bajo RLS. Chats cerrados con más de 30 días se
+purgan solos cada madrugada (`cron.schedule purge-closed-chats`).
 
 ## Probar la validación de licencias
 
