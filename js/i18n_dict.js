@@ -432,6 +432,8 @@ const I18N_ES_EN = {
 "Chats por atender": "Chats to handle",
 "Licencias por revisar": "Licenses to review",
 "Última versión": "Latest version",
+"Visitas web": "Web visits",
+"visitas a la página": "page views",
 "Al día 🎉": "All clear 🎉",
 "Usuario actualizado.": "User updated.",
 "Versiones actualizadas. Recuerda regenerar versiones/version.json si cambió la publicada.": "Versions updated. Remember to regenerate versiones/version.json if the published one changed.",

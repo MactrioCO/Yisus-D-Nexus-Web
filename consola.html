@@ -241,19 +241,22 @@
     /* ---------- Resumen ---------- */
     async function loadResumen() {
       await requireOwner();
-      const [u, c, l, r, umap] = await Promise.all([
+      const [u, c, l, r, v, umap] = await Promise.all([
         sb.from("landing_users").select("id,business_name,email,created_at").eq("active", false).order("created_at", { ascending: false }).limit(6),
         sb.from("landing_chats").select("id,name,contact,updated_at").eq("status", "human").order("updated_at", { ascending: false }).limit(6),
         sb.from("landing_licenses").select("id,key,requested_by,created_at").eq("status", "pending").order("created_at", { ascending: false }).limit(6),
         sb.from("landing_releases").select("version").eq("published", true).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+        sb.rpc("page_view", { p_bump: false }),
         usersMap(),
       ]);
       [u, c, l].forEach((q) => { if (q.error) throw q.error; });
+      const viewsTxt = (v && !v.error && typeof v.data === "number") ? v.data.toLocaleString("es-CO") : "—";
       const nu = (u.data || []).length, nc = (c.data || []).length, nl = (l.data || []).length;
       $("#dashStats").innerHTML = `
         <button class="stat" data-go="users"><b>${nu}</b><span>Cuentas por activar</span></button>
         <button class="stat" data-go="chat"><b>${nc}</b><span>Chats por atender</span></button>
         <button class="stat" data-go="licenses"><b>${nl}</b><span>Licencias por revisar</span></button>
+        <div class="stat"><b>${viewsTxt}</b><span>Visitas web</span></div>
         <div class="stat"><b>${r.data ? "v" + esc(r.data.version) : "—"}</b><span>Última versión</span></div>`;
       $("#dashUsers").innerHTML = (u.data || []).map((x) => `
         <button class="linkrow" data-go="users"><strong>${esc(x.business_name)}</strong><small>${esc(x.email)}</small></button>`).join("") || `<p class="muted">Al día 🎉</p>`;

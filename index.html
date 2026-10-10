@@ -110,7 +110,13 @@
             <div class="hstat"><b data-count="14">14</b><span>gráficos de gestión</span></div>
           </div>
         </div>
-        <div class="mock reveal d2" aria-label="Vista previa del programa">
+        <div class="hero-side reveal d2">
+          <div class="views-card" id="viewsCard" hidden>
+            <span class="views-eye" aria-hidden="true">👁</span>
+            <span class="views-num" id="viewsNum">0</span>
+            <span class="views-label">visitas a la página <i class="live-dot"></i></span>
+          </div>
+          <div class="mock" aria-label="Vista previa del programa">
           <!-- [REEMPLAZAR] HERO-SHOT: guarda tu captura en captures/pos-ventas.png
                y regístrala en site.config.js → screenshots.hero.
                El mock de abajo se oculta automáticamente. -->
@@ -139,6 +145,7 @@
           </div>
           <div class="mock-float mf-1">✅ Ticket impreso<small>P-000001 · 48 columnas</small></div>
           <div class="mock-float mf-2">📴 Venta sin internet<small>se sincroniza luego</small></div>
+          </div>
         </div>
       </div>
     </section>
@@ -572,6 +579,45 @@
     }
     let LATEST_VER = null;
     window.addEventListener("langchange", paintPill);
+
+    /* Contador global de visitas (mismo total para todos). */
+    const VKEY = "mactrio_count_day";
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function countUp(el, target) {
+      if (reduceMotion) { el.textContent = target.toLocaleString("es-CO"); return; }
+      const t0 = performance.now();
+      (function tick(t) {
+        const p = Math.min((t - t0) / 1400, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString("es-CO");
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    }
+    async function paintViews(animate) {
+      try {
+        const today = new Date().toISOString().slice(0, 10);
+        let bump = true;
+        try { bump = localStorage.getItem(VKEY) !== today; } catch (_) {}
+        const { data, error } = await sb.rpc("page_view", { p_bump: bump });
+        if (error || typeof data !== "number") return;
+        if (bump) { try { localStorage.setItem(VKEY, today); } catch (_) {} }
+        const card = document.getElementById("viewsCard");
+        const num = document.getElementById("viewsNum");
+        if (!card || !num) return;
+        const prev = parseInt(num.dataset.v || "0", 10);
+        num.dataset.v = String(data);
+        if (card.hidden) {
+          card.hidden = false;
+          countUp(num, data);
+        } else if (data > prev) {
+          countUp(num, data);
+          card.classList.remove("bump");
+          void card.offsetWidth;
+          card.classList.add("bump");
+        }
+      } catch (_) { /* sin contador si falla */ }
+    }
+    paintViews(true);
+    setInterval(() => paintViews(false), 30000);
   </script>
 </body>
 </html>

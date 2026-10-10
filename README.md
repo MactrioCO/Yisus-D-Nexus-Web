@@ -30,6 +30,7 @@ Landing Page/
 | Descargas | ✅ `descargas.html` + `versiones/version.json` (solo cuentas activas) |
 | Novedades | ✅ `novedades.html` (historial para customers activos + Mi licencia con solicitud) + tira en el hero del index |
 | Chat y WhatsApp | ✅ botón flotante de WhatsApp + Mactrio Bot (respuestas rápidas, pase a humano) en las 7 páginas; pestaña Conversación en el panel |
+| Visitas | ✅ contador global en el hero (mismo total para todos, RPC `page_view`) + tarjeta en Resumen |
 | Panel resumen | ✅ tab Resumen (pendientes + última versión, clic lleva a cada cola) |
 | Higiene chats | ✅ purga diaria de cerrados con +30 días (`purge-closed-chats`) |
 | Notas y manual | ✅ `notas.html` (historial público con notas ilimitadas desde el panel) + `manuales/manual-usuario.pdf` (13 págs, Ing Yisus D) |
