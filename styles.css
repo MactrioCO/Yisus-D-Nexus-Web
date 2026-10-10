@@ -127,16 +127,17 @@ body.menu-open .burger span:nth-child(3) { transform: translateY(-7px) rotate(-4
 
 /* Mockup del software (se reemplaza por captura real: ver README) */
 .hero-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.views-card { align-self: flex-end; display: flex; align-items: center; gap: 12px;
-  background: #fff; border: 1px solid var(--line); border-radius: 16px;
-  padding: 12px 20px; box-shadow: var(--shadow-sm); }
-.views-eye { font-size: 23px; }
-.views-num { font: 800 26px var(--mono); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.views-card { align-self: flex-end; display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; border: 1px solid var(--brand-100); border-radius: 99px;
+  padding: 7px 15px; box-shadow: var(--shadow-sm);
+  font-size: 13px; font-weight: 700; color: var(--brand-700); }
+.views-eye { font-size: 15px; }
+.views-num { font: 800 15px var(--mono); font-variant-numeric: tabular-nums; }
 .views-card.bump .views-num { animation: pop 0.5s ease; }
-@keyframes pop { 50% { transform: scale(1.18); color: var(--brand-700); } }
+@keyframes pop { 50% { transform: scale(1.25); } }
 .views-label { font-size: 12.5px; font-weight: 700; color: var(--ink-500); }
-.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok);
-  display: inline-block; margin-left: 5px; animation: pulse 2s infinite; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok);
+  display: inline-block; margin-left: 2px; animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); } 50% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); } }
 .mock { position: relative; animation: float 7s ease-in-out infinite; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
