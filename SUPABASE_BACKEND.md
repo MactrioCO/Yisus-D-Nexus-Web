@@ -116,3 +116,13 @@ con `{"p_key": "YDNX-XXXX-XXXX"}` y anon key → `true`/`false`.
 - [ ] El .exe del release descarga directo (sin login de GitHub).
 - [ ] Un customer no puede verse la fila de otro ni hacerse owner
       (verificado con `scripts/verify_landing_rls.py`).
+
+## Espejo POS (control remoto)
+
+Policies `owner_read_*` (SELECT solo owner) sobre `business`,
+`branch`, `role`, `"user"` y `audit_log` + grants. El panel lee con
+columnas explícitas: **jamás** `password_hash` ni `previous_hashes`.
+Pestaña Negocios: buscador, ficha por negocio (licencia YDNX asignable
+vía `business_id`), usuarios con estado y antigüedad de baja, e
+historial por usuario (módulo = prefijo de `action`, filtro + páginas
+de 25). Sin sesión de owner todo devuelve vacío.

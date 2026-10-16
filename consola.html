@@ -58,6 +58,7 @@
       <div id="panelBody" hidden>
         <div class="tabs" role="tablist">
           <button class="tab active" data-tab="home" role="tab">Resumen</button>
+          <button class="tab" data-tab="pos" role="tab">Negocios</button>
           <button class="tab" data-tab="users" role="tab">Usuarios</button>
           <button class="tab" data-tab="releases" role="tab">Versiones</button>
           <button class="tab" data-tab="licenses" role="tab">Licencias</button>
@@ -75,6 +76,31 @@
             <div class="form-card"><h3 style="margin-top:0">Chats por atender</h3><div id="dashChats"><p class="muted">…</p></div></div>
           </div>
           <div class="form-card"><h3 style="margin-top:0">Licencias por revisar</h3><div id="dashLic"><p class="muted">…</p></div></div>
+        </section>
+
+        <!-- NEGOCIOS (espejo del programa) -->
+        <section id="tab-pos" hidden>
+          <div class="form-card">
+            <div class="grid2">
+              <label class="field">Buscar negocio
+                <input type="text" id="posSearch" placeholder="Nombre, NIT o correo…" />
+              </label>
+              <div style="align-self:end"><button class="btn btn-ghost btn-sm" id="posReload" type="button">↻ Recargar</button>
+              <span class="muted" id="posCount"></span></div>
+            </div>
+          </div>
+          <div class="table-wrap"><table class="admin">
+            <thead><tr><th>Negocio</th><th>Usuarios</th><th>Licencia</th><th>Última actividad</th><th></th></tr></thead>
+            <tbody id="posBody"><tr><td colspan="5">Entra a la pestaña para cargar…</td></tr></tbody>
+          </table></div>
+          <div id="posProfile" hidden>
+            <div class="form-card" id="posBizCard"></div>
+            <div class="table-wrap"><table class="admin">
+              <thead><tr><th>Usuario</th><th>Rol / sede</th><th>Estado</th><th>Último acceso</th><th></th></tr></thead>
+              <tbody id="posUsersBody"></tbody>
+            </table></div>
+            <div class="form-card" id="posUserCard" hidden></div>
+          </div>
         </section>
 
         <!-- USUARIOS -->
@@ -221,15 +247,17 @@
     }
     function hideMsg() { $("#msg").hidden = true; }
     const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    const fmtDate = (iso) => new Date(iso).toLocaleString("es-CO", { dateStyle: "medium", timeStyle: "short" });
+    const LANG_EN = () => document.documentElement.lang === "en";
+    const fmtDate = (iso) => new Date(iso).toLocaleString(LANG_EN() ? "en-US" : "es-CO", { dateStyle: "medium", timeStyle: "short" });
 
     document.querySelectorAll(".tab[data-tab]").forEach((t) => {
       t.addEventListener("click", () => {
         document.querySelectorAll(".tab[data-tab]").forEach((x) => x.classList.remove("active"));
         t.classList.add("active");
-        ["users", "releases", "licenses", "chat", "home"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
+        ["users", "releases", "licenses", "chat", "home", "pos"].forEach((k) => { $("#tab-" + k).hidden = k !== t.dataset.tab; });
         if (t.dataset.tab === "chat") startChatPoll(); else stopChatPoll();
         if (t.dataset.tab === "home") loadResumen().catch((e) => showMsg(niceErr(e), "err"));
+        if (t.dataset.tab === "pos" && !POS.loaded) loadPos().catch((e) => showMsg(niceErr(e), "err"));
         hideMsg();
         if (window.NexusI18n) {
           NexusI18n.loading(true);
@@ -273,6 +301,201 @@
       const tab = document.querySelector('.tab[data-tab="' + b.dataset.go + '"]');
       if (tab) tab.click();
       if (b.dataset.go === "chat" && b.dataset.id) selectChat(b.dataset.id);
+    });
+
+    /* ---------- Negocios (espejo del programa, solo lectura + licencias) ---------- */
+    const POS = { loaded: false, biz: [], users: [], roles: {}, branches: {}, lic: [],
+      lastAct: {}, lastUserAct: {}, bizId: null, userId: null, audit: [], auditPage: 0, auditMod: "todos" };
+    // Columnas seguras: jamás password_hash ni previous_hashes.
+    function ago(iso) {
+      if (!iso) return "—";
+      const en = LANG_EN();
+      const d = new Date(iso);
+      const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+      const f = d.toLocaleString(en ? "en-US" : "es-CO", { dateStyle: "medium" });
+      if (days <= 0) return (en ? "today · " : "hoy · ") + f;
+      if (days === 1) return (en ? "yesterday · " : "ayer · ") + f;
+      return (en ? days + " days ago · " : "hace " + days + " días · ") + f;
+    }
+    function inactiveLabel(u) {
+      if (u.is_active && !u.deleted_at) return `<span class="badge ok">activo</span>`;
+      const d = u.deleted_at || u.updated_at;
+      const tag = u.deleted_at
+        ? (LANG_EN() ? "deactivated" : "dado de baja")
+        : (LANG_EN() ? "deactivated (last change)" : "desactivado (último cambio)");
+      return `<span class="badge off">inactivo</span> <span class="muted">${tag}: ${d ? fmtDate(d) : "—"}</span>`;
+    }
+    const moduleOf = (a) => String(a || "").split(".")[0] || "sistema";
+    async function loadPos() {
+      await requireOwner();
+      const [b, u, r, br, l, a, au] = await Promise.all([
+        sb.from("business").select("id,name,legal_name,tax_id,address,phone,email,created_at").order("name").limit(200),
+        sb.from("user").select("id,business_id,username,full_name,email,role_id,branch_id,is_active,deleted_at,updated_at,last_login_at,created_at").order("username").limit(1000),
+        sb.from("role").select("id,name").limit(500),
+        sb.from("branch").select("id,business_id,name").order("name").limit(500),
+        sb.from("landing_licenses").select("id,key,business_id,active,status,notes").order("created_at", { ascending: false }).limit(200),
+        sb.from("audit_log").select("business_id,created_at").order("created_at", { ascending: false }).limit(1000),
+        sb.from("audit_log").select("user_id,created_at").order("created_at", { ascending: false }).limit(1000),
+      ]);
+      [b, u, r, br, l, a, au].forEach((q) => { if (q.error) throw q.error; });
+      POS.biz = b.data || [];
+      POS.users = u.data || [];
+      POS.roles = Object.fromEntries((r.data || []).map((x) => [x.id, x.name]));
+      POS.branches = Object.fromEntries((br.data || []).map((x) => [x.id, x]));
+      POS.lic = l.data || [];
+      POS.lastAct = {};
+      (a.data || []).forEach((x) => { if (!POS.lastAct[x.business_id]) POS.lastAct[x.business_id] = x.created_at; });
+      POS.lastUserAct = {};
+      (au.data || []).forEach((x) => { if (x.user_id && !POS.lastUserAct[x.user_id]) POS.lastUserAct[x.user_id] = x.created_at; });
+      POS.loaded = true;
+      renderBiz(document.getElementById("posSearch").value);
+    }
+    function licOf(bizId) {
+      return POS.lic.find((x) => x.business_id === bizId && x.active) || POS.lic.find((x) => x.business_id === bizId) || null;
+    }
+    function renderBiz(filter) {
+      const f = String(filter || "").toLowerCase();
+      const rows = POS.biz.filter((b) => !f || (b.name + " " + (b.tax_id || "") + " " + (b.email || "")).toLowerCase().includes(f));
+      const nu = POS.users.length;
+      document.getElementById("posCount").textContent = rows.length + " negocios · " + nu + " usuarios del programa";
+      document.getElementById("posBody").innerHTML = rows.map((b) => {
+        const n = POS.users.filter((u) => u.business_id === b.id).length;
+        const lic = licOf(b.id);
+        return `<tr>
+          <td><strong>${esc(b.name)}</strong><br /><span class="muted">${esc(b.tax_id) || "sin NIT"}</span></td>
+          <td>${n}</td>
+          <td>${lic ? `<code>${esc(lic.key)}</code>` : `<span class="muted">sin asignar</span>`}</td>
+          <td class="muted">${POS.lastAct[b.id] ? ago(POS.lastAct[b.id]) : "sin actividad"}</td>
+          <td><button class="btn btn-ghost btn-sm" data-biz="${b.id}">Ver</button></td>
+        </tr>`;
+      }).join("") || `<tr><td colspan="5">Sin negocios.</td></tr>`;
+    }
+    function renderBizCard() {
+      const b = POS.biz.find((x) => x.id === POS.bizId);
+      if (!b) return;
+      const lic = licOf(b.id);
+      const opts = POS.lic
+        .filter((x) => x.active && x.status === "approved" && (!x.business_id || x.business_id === b.id))
+        .map((x) => `<option value="${x.id}"${lic && x.id === lic.id ? " selected" : ""}>${esc(x.key)}</option>`).join("");
+      document.getElementById("posBizCard").innerHTML = `
+        <h3 style="margin-top:0">${esc(b.name)}</h3>
+        <p class="muted">${[b.legal_name, b.tax_id && ("NIT " + b.tax_id), b.address, b.phone, b.email].filter(Boolean).map(esc).join(" · ") || "—"}</p>
+        <div class="grid2">
+          <div><strong>Licencia YDNX</strong><br />${lic ? `<code>${esc(lic.key)}</code> <span class="badge ${lic.active ? "ok" : "off"}">${lic.active ? "activa" : "inactiva"}</span>` : `<span class="muted">sin asignar</span>`}</div>
+          <label class="field">Asignar licencia
+            <span style="display:flex;gap:8px"><select id="licAssign" style="flex:1;font:500 14px var(--font);padding:11px;border:1px solid var(--ink-300);border-radius:11px"><option value="">—</option>${opts}</select>
+            <button class="btn btn-ghost btn-sm" id="licAssignBtn" type="button">Guardar</button>
+            ${lic ? `<button class="btn btn-ghost btn-sm" id="licUnassignBtn" type="button">Quitar</button>` : ""}</span>
+          </label>
+        </div>`;
+      document.getElementById("licAssignBtn").addEventListener("click", async () => {
+        const id = document.getElementById("licAssign").value;
+        if (!id) return;
+        try {
+          await requireOwner();
+          const { error } = await sb.from("landing_licenses").update({ business_id: b.id }).eq("id", id);
+          if (error) throw error;
+          const row = POS.lic.find((x) => x.id === id);
+          if (row) row.business_id = b.id;
+          renderBiz(document.getElementById("posSearch").value);
+          renderBizCard();
+          showMsg("Licencia asignada a " + b.name + ".", "ok");
+        } catch (err) { showMsg(niceErr(err), "err"); }
+      });
+      const un = document.getElementById("licUnassignBtn");
+      if (un) un.addEventListener("click", async () => {
+        if (!lic || !confirm("Quitar la licencia " + lic.key + " de " + b.name + "?")) return;
+        try {
+          await requireOwner();
+          const { error } = await sb.from("landing_licenses").update({ business_id: "" }).eq("id", lic.id);
+          if (error) throw error;
+          lic.business_id = "";
+          renderBiz(document.getElementById("posSearch").value);
+          renderBizCard();
+          showMsg("Licencia desvinculada.", "ok");
+        } catch (err) { showMsg(niceErr(err), "err"); }
+      });
+    }
+    function renderBizUsers() {
+      const rows = POS.users.filter((u) => u.business_id === POS.bizId);
+      document.getElementById("posUsersBody").innerHTML = rows.map((u) => `
+        <tr>
+          <td><strong>${esc(u.username)}</strong><br /><span class="muted">${esc(u.full_name)}${u.email ? " · " + esc(u.email) : ""}</span></td>
+          <td>${esc(POS.roles[u.role_id]) || "—"}<br /><span class="muted">${u.branch_id && POS.branches[u.branch_id] ? esc(POS.branches[u.branch_id].name) : "todas"}</span></td>
+          <td>${inactiveLabel(u)}</td>
+          <td class="muted">${u.last_login_at ? ago(u.last_login_at) : "nunca"}</td>
+          <td><button class="btn btn-ghost btn-sm" data-user="${u.id}">Ver</button></td>
+        </tr>`).join("") || `<tr><td colspan="5">Sin usuarios.</td></tr>`;
+    }
+    async function selectUser(uid, page) {
+      POS.userId = uid;
+      POS.auditPage = page || 0;
+      const u = POS.users.find((x) => x.id === uid);
+      if (!u) return;
+      const b = POS.biz.find((x) => x.id === u.business_id);
+      const lic = licOf(u.business_id);
+      const { data, error } = await sb.from("audit_log")
+        .select("action,entity_type,summary,severity,created_at")
+        .eq("user_id", uid).order("created_at", { ascending: false })
+        .range(POS.auditPage * 25, POS.auditPage * 25 + 24);
+      if (error) throw error;
+      if (POS.auditPage === 0) POS.audit = [];
+      POS.audit = POS.audit.concat(data || []);
+      const mods = ["todos", ...new Set(POS.audit.map((x) => moduleOf(x.action)))];
+      if (!mods.includes(POS.auditMod)) POS.auditMod = "todos";
+      const list = POS.audit.filter((x) => POS.auditMod === "todos" || moduleOf(x.action) === POS.auditMod);
+      const card = document.getElementById("posUserCard");
+      card.hidden = false;
+      card.innerHTML = `
+        <h3 style="margin-top:0">${esc(u.username)} <span class="muted">· ${esc(u.full_name)}</span></h3>
+        <p class="muted">${[u.email, POS.roles[u.role_id] && ("rol " + POS.roles[u.role_id]), b && b.name, "creado " + fmtDate(u.created_at)].filter(Boolean).map(esc).join(" · ")}</p>
+        <p>Estado: ${inactiveLabel(u)} &nbsp; Último acceso: <strong>${u.last_login_at ? ago(u.last_login_at) : "nunca"}</strong> &nbsp; Última acción: <strong>${POS.lastUserAct[uid] ? ago(POS.lastUserAct[uid]) : "—"}</strong></p>
+        <p>Licencia del negocio: ${lic ? `<code>${esc(lic.key)}</code>` : `<span class="muted">sin asignar</span>`} <button class="btn btn-ghost btn-sm" id="goLic" type="button">Ir a licencias</button></p>
+        <h3>Historial (${POS.audit.length}${(data || []).length === 25 ? "+" : ""})</h3>
+        <label class="field" style="max-width:280px">Módulo
+          <select id="auditMod">${mods.map((m) => `<option${m === POS.auditMod ? " selected" : ""}>${esc(m)}</option>`).join("")}</select>
+        </label>
+        <div class="table-wrap"><table class="admin">
+          <thead><tr><th>Fecha</th><th>Módulo</th><th>Acción</th><th>Detalle</th></tr></thead>
+          <tbody>${list.map((x) => `
+            <tr><td class="muted">${fmtDate(x.created_at)}</td>
+            <td><span class="badge">${esc(moduleOf(x.action))}</span></td>
+            <td><code>${esc(x.action)}</code></td>
+            <td>${esc(x.summary)}${x.severity && x.severity !== "info" ? ` <span class="badge off">${esc(x.severity)}</span>` : ""}</td></tr>`).join("") || `<tr><td colspan="4">Sin movimientos.</td></tr>`}</tbody>
+        </table></div>
+        ${(data || []).length === 25 ? `<button class="btn btn-ghost btn-sm" id="auditMore" type="button">Cargar más</button>` : ""}`;
+      card.scrollIntoView({ block: "nearest" });
+      document.getElementById("goLic").addEventListener("click", () => {
+        document.querySelector('.tab[data-tab="licenses"]').click();
+      });
+      document.getElementById("auditMod").addEventListener("change", (e) => {
+        POS.auditMod = e.target.value;
+        selectUser(uid, POS.auditPage);
+      });
+      const more = document.getElementById("auditMore");
+      if (more) more.addEventListener("click", () => selectUser(uid, POS.auditPage + 1));
+    }
+    document.getElementById("posSearch").addEventListener("input", (e) => renderBiz(e.target.value));
+    document.getElementById("posReload").addEventListener("click", () => {
+      POS.loaded = false;
+      loadPos().catch((e) => showMsg(niceErr(e), "err"));
+    });
+    document.getElementById("posBody").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-biz]");
+      if (!b) return;
+      POS.bizId = b.dataset.biz;
+      POS.userId = null;
+      document.getElementById("posUserCard").hidden = true;
+      document.getElementById("posProfile").hidden = false;
+      renderBizCard();
+      renderBizUsers();
+      document.getElementById("posProfile").scrollIntoView({ block: "nearest" });
+    });
+    document.getElementById("posUsersBody").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-user]");
+      if (!b) return;
+      POS.auditMod = "todos";
+      selectUser(b.dataset.user, 0).catch((err) => showMsg(niceErr(err), "err"));
     });
 
     /* ---------- Usuarios ---------- */

@@ -33,6 +33,7 @@ Landing Page/
 | Visitas | ✅ contador global en el hero (mismo total para todos, RPC `page_view`) + tarjeta en Resumen |
 | Panel resumen | ✅ tab Resumen (pendientes + última versión, clic lleva a cada cola) |
 | Higiene chats | ✅ purga diaria de cerrados con +30 días (`purge-closed-chats`) |
+| Negocios POS | ✅ tab Negocios: espejo del programa (usuarios, ficha, historial por módulo, licencia vinculada) |
 | Notas y manual | ✅ `notas.html` (historial público con notas ilimitadas desde el panel) + `manuales/manual-usuario.pdf` (13 págs, Ing Yisus D) |
 | Inglés | ✅ botón 🌐 ES/EN (diccionario 448 entradas, bot + respuestas del dueño traducidas) |
 | Licencias | ✅ por solicitud: el customer pide, el owner acepta/rechaza viendo correo y negocio |
